@@ -96,7 +96,12 @@ def deleteFriend(userChoice):
 
     # if user input a friend, remove that user as friend
     while True:
-        idOfFriendToRemove = int(input("Enter id of friend to remove (Enter 0 to exit): "))
+        while True:
+            try:
+                idOfFriendToRemove = int(input("Enter id of friend to remove (Enter 0 to exit): "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter an integer only!")
 
         if idOfFriendToRemove in userFriends.keys():
             # remove friend
