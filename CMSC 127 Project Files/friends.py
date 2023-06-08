@@ -120,8 +120,6 @@ def searchFriend(userChoice):
     while True:
         nameOfFriendToSearch = input("Enter name of friend (Enter 0 to exit): ")
 
-        print("Finding friend...")
-
         # query to find friend
         query = f"select user_id, name from friendsWith join user on user2=user_id where user1 = {userChoice} AND name LIKE '%{nameOfFriendToSearch}%'"
         cur.execute(query)
@@ -130,13 +128,14 @@ def searchFriend(userChoice):
         searchResults = cur.fetchall()
 
         if len(searchResults) != 0:
+            print("Finding friend...")
             print("Friend/s found!")
             for row in searchResults:
                 id = row[0]
                 name = row[1]
                 print(f"{id} - {name}")
             break
-        elif nameOfFriendToSearch == 0:
+        elif nameOfFriendToSearch == "0":
             print("Exiting...")
             break
         else:
