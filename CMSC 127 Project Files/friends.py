@@ -1,6 +1,7 @@
 # user of login info
 # userChoice - id of the logged in user
 import mysql.connector
+import signupLoginMenu
 
 mariadb_connect = mysql.connector.connect(
     user="root",
@@ -40,10 +41,28 @@ def addFriend(userChoice):
         else:
             print("Friend does not exist!")
         
-    # add friend as users friend
-    query = f"INSERT INTO friendsWith (user1, user2) VALUES ({userChoice},{idOfFriendToAdd})"
+    # add friend as users friend (if they're not friends yet)
+    query = f'''
+        INSERT INTO friendsWith (user1, user2)
+        SELECT {userChoice}, {idOfFriendToAdd}
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM friendsWith
+            WHERE (user1 = {userChoice} AND user2 = {idOfFriendToAdd})
+        );
+        '''
     cur.execute(query)
-
+    
+    query = f'''
+        INSERT INTO friendsWith (user1, user2)
+        SELECT {idOfFriendToAdd}, {userChoice}
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM friendsWith
+            WHERE (user1 = {idOfFriendToAdd} AND user2 = {userChoice})
+        );
+        '''
+    cur.execute(query)
     mariadb_connect.commit()
     
     print("Added friend successfully!")
@@ -78,38 +97,26 @@ def friendsManager(userChoice):
         
         if friendManagerOption == '0':
 
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            return
         elif friendManagerOption == '1':
             addFriend(userChoice)
             
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            return
         elif friendManagerOption == '2':
             deleteFriend(populatedUsers)
 
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            return
         elif friendManagerOption == '3':
             searchFriend(populatedUsers)
             
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            return
         elif friendManagerOption == '4':
             updateFriend(populatedUsers)
 
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            return
         else:
             print("Invalid Input!")
 
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            return
 
 friendsManager(4)
