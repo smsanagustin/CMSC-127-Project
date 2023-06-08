@@ -2,7 +2,7 @@ import mysql.connector
 
 mariadb_connection = mysql.connector.connect(
     user="root",
-    password="ilove127",
+    password="elvinbautista",
     host="localhost",
     database="cmsc127group3")
 
@@ -26,11 +26,17 @@ def viewAllGroups():
     for key, value in groups.items():
         print(key, "-", value)
 
-def addGroup():
+def createGroup(userChoice):
     print("\t-----ADDING-----\n")
     group_name = input("Enter groupname: ")
     try: 
         query = f"INSERT INTO grp (group_name) VALUES ('{group_name}')"
+        cur.execute(query) 
+        query = f"SELECT MAX(group_id) FROM grp"
+        cur.execute(query)
+        idTuple = cur.fetchone()
+        latestGroupId = idTuple[0]
+        query = f"INSERT INTO belongsTo (user_id,group_id) VALUES ({userChoice},{latestGroupId})"
         cur.execute(query)
         mariadb_connection.commit()
         print(group_name,"has been created")
@@ -64,7 +70,7 @@ def searchGroup():
     else:
         print(groupToDisplay,"-",groups[groupToDisplay])
 
-def updateGroup():
+def updateGroup(userChoice):
     groups = getGroups()
     print("\t-----UPDATING-----\n")
     for key, value in groups.items():
@@ -85,7 +91,7 @@ def updateGroup():
             if action == 0:
                 break
             elif action == 1:
-                addFriendToGroup()
+                addFriendToGroup(userChoice, groups[group_id])
             elif action == 2:
                 removeFriendFromGroup()
             elif action == 3:
@@ -96,12 +102,37 @@ def updateGroup():
 
     # Rename the group, add friend to the group, remove friend to a group
 
-def addFriendToGroup(groupId):
-    idOfFriendToRemove = int(input("Enter user ID: "))
+def addFriendToGroup(userId, groupId, groupName):
+    import friends
+    friendsOfUser = friends.getFriends(userId)
+    for key,value in friendsOfUser.items():
+        print(key, "-", value)
 
-def removeFriendFromGroup(groupId):
-    print("Update group still WIP!")
-    
+    friendId = int(input("Enter friend ID: "))
+    if friendId in friendsOfUser.keys():
+        query = f"INSERT INTO belongsTo (user_id,group_id) VALUES ({friendId},{groupId})"
+        cur.execute(query)
+        print(f"{friendsOfUser[friendId]} has been added to {groupName}")
+    else:
+        print("Friend does not exist!")
+
+
+def removeFriendFromGroup(userId, groupId, groupName):
+    import friends
+    friendsOfUser = friends.getFriends(userId)
+    for key,value in friendsOfUser.items():
+        print(key, "-", value)
+    friendId = int(input("Enter friend ID: "))
+
+    if friendId in friendsOfUser.keys():
+        query = f"DELETE FROM belongsTo (user_id,group_id) VALUES ({friendId},{groupId})"
+        cur.execute(query)
+        print(f"{friendsOfUser[friendId]} has been removed from {groupName}")
+        # should catch the case where the friend cannot be removed from the group if the group still
+        #  has an unsettled expense
+    else:
+        print("Friend does not exist!")
+
 def renameGroup(groupId, oldGroupName):
     newGroupName = input("Enter new group name: ")
     query = f"UPDATE grp SET group_name = '{newGroupName}' WHERE group_id = {groupId}"
@@ -109,8 +140,21 @@ def renameGroup(groupId, oldGroupName):
     mariadb_connection.commit()
     print(f"Group {oldGroupName} has been successfully renamed to {newGroupName}")
 
+def viewAllGroupsWithOB(userId):
+    query = f"""SELECT group_name FROM grp JOIN group_has_expense as `g`
+    ON grp.group_id = g.group_id
+    JOIN expense as `e`
+    ON g.expense_id = e.expense_id
+    JOIN belongsTo as `b`
+    ON g.group_id = b.group_id AND b.user_id = {userId}
+    WHERE e.cash_flow > 0 AND e.isSettled = 0 GROUP BY grp.group_id;"""
+    cur.execute(query)
 
+    print("Groups with outstanding balance")
+    for row in cur.fetchall():
+        print(row[0])
 
+        
 def groupsManager(userChoice, userName):
     while True:
         print("\n What would you like to do?\n"
@@ -119,6 +163,7 @@ def groupsManager(userChoice, userName):
             "[3] Search Group\n"
             "[4] View All Groups\n"
             "[5] Update Group\n"
+            "[6] View All Groups with an Outstanding Balance\n"
             "[0] Back"
             )
         groupManagerOption = input("\nEnter choice: ")
@@ -129,7 +174,7 @@ def groupsManager(userChoice, userName):
             signupLoginMenu.mainPage(userChoice,userName)
             break
         elif groupManagerOption == '1':
-            addGroup()
+            createGroup(userChoice)
         elif groupManagerOption == '2':
             deleteGroup()
         elif groupManagerOption == '3':
@@ -137,6 +182,8 @@ def groupsManager(userChoice, userName):
         elif groupManagerOption == '4':
             viewAllGroups()
         elif groupManagerOption == '5':
-            updateGroup()
+            updateGroup(userChoice)
+        elif groupManagerOption == '6':
+            viewAllGroupsWithOB(userChoice)
         else:
             print("Invalid Input!")

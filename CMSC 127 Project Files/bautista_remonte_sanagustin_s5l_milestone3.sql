@@ -159,7 +159,9 @@ SELECT * FROM grp;
 
 -- View all group with outstanding balance
 SELECT group_name FROM grp JOIN group_has_expense as `g`
-    ON grp.group_id = g.group_id 
+    ON grp.group_id = g.group_id
     JOIN expense as `e`
-    ON g.expense_id = e.expense_id;
-    WHERE e.cash_flow > 0 AND e.isSettled = 0 GROUP BY e.group_id;
+    ON g.expense_id = e.expense_id
+    JOIN belongsTo as `b`
+    ON g.group_id = b.group_id AND b.user_id = 1 -- the user id should be the current user
+    WHERE e.cash_flow > 0 AND e.isSettled = 0 GROUP BY grp.group_id;
