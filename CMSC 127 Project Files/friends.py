@@ -97,10 +97,10 @@ def deleteFriend(userChoice):
             print("Removing friend...")
 
             # sql query to remove friend
-            query = f("SELECT FROM friendsWith WHERE user1 = {userChoice} and user2 = {idOfFriendToRemove}")
+            query = (f"SELECT FROM friendsWith WHERE user1 = {userChoice} and user2 = {idOfFriendToRemove}")
             cur.execute(query)
 
-            query = f("SELECT FROM friendsWith WHERE user1 = {idOfFriendToRemove} and user2 = {userChoice}")
+            query = (f"SELECT FROM friendsWith WHERE user1 = {idOfFriendToRemove} and user2 = {userChoice}")
             cur.execute(query)
 
             print("Removed friend successfully!")
