@@ -145,11 +145,13 @@ def searchFriend(userChoice):
     #TODO: Request for the friendID to be searched
     #display input fields for the friend details
 
-def updateFriend(populatedUsers):
-    print("Update friend still WIP!")
-
-    #TODO: Request for the friendID to be updated
-    #then display input fields for the new values
+# NO LONGER INCLUDED (ACCORDING TO MA'AM MONINA) WILL CLARIFY W/ SIR PRINCE
+# def updateFriend(userChoice):
+#     # get all friends
+#     userFriends = getFriends(userChoice)
+    
+#     #TODO: Request for the friendID to be updated
+#     #then display input fields for the new values
 
 def friendsManager(userChoice, userName):
     while True:
@@ -157,7 +159,7 @@ def friendsManager(userChoice, userName):
             "[1] Add Friend\n"
             "[2] Delete Friend\n"
             "[3] Search Friend\n"
-            "[4] Update Friend Details\n"
+            # "[4] Update Friend Details\n"
             "[0] Back"
             )
         friendManagerOption = input("\nEnter choice: ")
@@ -185,12 +187,12 @@ def friendsManager(userChoice, userName):
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice, userName)
             break
-        elif friendManagerOption == '4':
-            updateFriend(populatedUsers)
+        # elif friendManagerOption == '4':
+        #     updateFriend(populatedUsers)
 
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice, userName)
-            break
+        #     import signupLoginMenu
+        #     signupLoginMenu.mainPage(userChoice, userName)
+        #     break
         else:
             print("Invalid Input!")
 
