@@ -1,11 +1,11 @@
 import sys
 import mysql.connector
-import signupLoginMenu
+# import signupLoginMenu
 
 # connects to a mariadb database
 con = mysql.connector.connect(
     user="root",
-    password="elvinbautista",
+    password="ilove127",
     host="localhost",
     port= 3306,
     )
@@ -21,4 +21,4 @@ with open('Project_Dependencies.sql', 'r') as sql_file:
 con.commit()
 
 #separate function call module to stop iterating mainMenuLoop if imported from other modules
-signupLoginMenu.mainMenuLoop()
+# signupLoginMenu.mainMenuLoop()

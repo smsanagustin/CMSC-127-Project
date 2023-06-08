@@ -7,16 +7,40 @@
 import mysql.connector
 
 # connects to a mariadb database
-mariadb_connection = mysql.connector.connect(
+con = mysql.connector.connect(
     user="root",
     password="ilove127",
     host="localhost",
-    port= 3306,
+    database= "cmsc127group3",
     )
 
 # perform database operations here:
 # used to execute sql queries on the databases
-create_cursor  = mariadb_connection.cursor()
+cur  = con.cursor()
+
+def getMaxExpenseId():
+	select_maxTaskNo = "SELECT MAX(expense_id) FROM expense"
+	cur.execute(select_maxTaskNo)
+
+	for i in cur:
+		highest = i
+		break
+	
+	if highest[0]==None:
+		return 0
+	return (highest[0])
+
+def getAllFriends():
+	select_maxTaskNo = "SELECT name FROM user JOIN friendsWith ON user.user_id=friendsWith.user2 WHERE friendsWith.user1=2 GROUP BY friendsWith.user2;"
+	cur.execute(select_maxTaskNo)
+
+	for i in cur:
+		highest = i
+		break
+	
+	if highest[0]==None:
+		return 0
+	return (highest[0])
 
 
 def addExpense(userChoice, populatedExpenses):
@@ -31,6 +55,7 @@ def addExpense(userChoice, populatedExpenses):
             #TODO: Add expense attributes inputs here
             print("Add Expense with a Friend still WIP!")
 
+            total_value = input("Enter total expenses: ")
             split_method = input("Split Method (custom or equal):")
             cash_flow = input("Cash Flow:")
             expense_name = input("Enter expense label: ")
@@ -42,9 +67,9 @@ def addExpense(userChoice, populatedExpenses):
 
             try: 
                 #TODO: insert new user tuple sql query here
-                query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES ('{total_value}', 'CURDATE()', '{inputPassword}','{inputName}', '{CURDATE()}', '{inputPassword}','{inputName}', '{CURDATE()}')"
-                create_cursor.execute(query)
-                mariadb_connection.commit()
+                query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES ('{getMaxExpenseId()}', '{total_value}', 'CURDATE()', 'False','{split_method}', '{cash_flow}', '{expense_name}','{userChoice}', '{CURDATE()}')"
+                cur.execute(query)
+                con.commit()
             except mysql.connector.Error as e: 
                 print(f"Error: {e}")
 

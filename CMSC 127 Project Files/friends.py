@@ -2,15 +2,17 @@
 # userChoice - id of the logged in user
 import mysql.connector
 
-mariadb_connect = mysql.connector.connect(
+# connects to a mariadb database
+con = mysql.connector.connect(
     user="root",
-    password="elvinbautista",
+    password="ilove127",
     host="localhost",
-    database="cmsc127group3"
-)
+    database= "cmsc127group3",
+    )
 
-# create cursor object
-cur = mariadb_connect.cursor()
+# perform database operations here:
+# used to execute sql queries on the databases
+cur  = con.cursor()
 
 # lets logged in user add a user
 def addFriend(userChoice):
@@ -44,7 +46,7 @@ def addFriend(userChoice):
     query = f"INSERT INTO friendsWith (user1, user2) VALUES ({userChoice},{idOfFriendToAdd})"
     cur.execute(query)
 
-    mariadb_connect.commit()
+    con.commit()
     
     print("Added friend successfully!")
 
@@ -88,19 +90,19 @@ def friendsManager(userChoice):
             signupLoginMenu.mainPage(userChoice)
             break
         elif friendManagerOption == '2':
-            deleteFriend(populatedUsers)
+            # deleteFriend(populatedUsers)
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
         elif friendManagerOption == '3':
-            searchFriend(populatedUsers)
+            # searchFriend(populatedUsers)
             
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
         elif friendManagerOption == '4':
-            updateFriend(populatedUsers)
+            # updateFriend(populatedUsers)
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)

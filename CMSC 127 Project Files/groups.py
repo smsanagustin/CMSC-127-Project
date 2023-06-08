@@ -1,12 +1,16 @@
 import mysql.connector
 
-mariadb_connection = mysql.connector.connect(
+# connects to a mariadb database
+con = mysql.connector.connect(
     user="root",
-    password="elvinbautista",
+    password="ilove127",
     host="localhost",
-    database="cmsc127group3")
+    database= "cmsc127group3",
+    )
 
-cur = mariadb_connection.cursor()
+# perform database operations here:
+# used to execute sql queries on the databases
+cur  = con.cursor()
 
 def getGroups():
     groups = {}
@@ -26,7 +30,7 @@ def addGroup():
     try: 
         query = f"INSERT INTO grp (group_name) VALUES ('{group_name}')"
         cur.execute(query)
-        mariadb_connection.commit()
+        con.commit()
         print(group_name,"has been created")
     except mysql.connector.Error as e: 
         print(f"Error: {e}")
@@ -43,7 +47,7 @@ def deleteGroup():
     else:
         query = f"DELETE FROM grp WHERE group_id = {groupToDelete}"
         cur.execute(query)
-        mariadb_connection.commit()
+        con.commit()
         print("Succecfully deleted group",groups[groupToDelete])
 
 

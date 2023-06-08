@@ -3,13 +3,17 @@ import friends
 import groups
 import mysql.connector
 
-mariadb_connection = mysql.connector.connect(
+# connects to a mariadb database
+con = mysql.connector.connect(
     user="root",
-    password="elvinbautista",
+    password="ilove127",
     host="localhost",
-    database="cmsc127group3")
+    database= "cmsc127group3",
+    )
 
-cur = mariadb_connection.cursor()
+# perform database operations here:
+# used to execute sql queries on the databases
+cur  = con.cursor()
 
 #populatedUsers = ["Silent Marc","Mae Laban but e","Jon w/o h"]
 populatedUsers = {}
@@ -93,7 +97,7 @@ def signup():
         #TODO: insert new user tuple sql query here
         query = f"INSERT INTO user (name, username, password) VALUES ('{inputName}', '{inputUsername}', '{inputPassword}')"
         cur.execute(query)
-        mariadb_connection.commit()
+        con.commit()
     except mysql.connector.Error as e: 
         print(f"Error: {e}")
     mainMenuLoop()
