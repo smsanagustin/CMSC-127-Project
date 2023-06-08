@@ -59,7 +59,7 @@ def addFriend(userChoice):
         name = row[1]
 
         # print user if it's not the logged in user or the admin
-        if userChoice != id and id !=1: 
+        if userChoice != id: 
             listOfFriendsToAdd.append(id)
             print(f"ID: {id}, Name: {name}")
 
