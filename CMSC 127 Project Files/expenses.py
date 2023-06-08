@@ -30,17 +30,30 @@ def getMaxExpenseId():
 		return 0
 	return (highest[0])
 
-def getAllFriends():
-	select_maxTaskNo = "SELECT name FROM user JOIN friendsWith ON user.user_id=friendsWith.user2 WHERE friendsWith.user1=2 GROUP BY friendsWith.user2;"
-	cur.execute(select_maxTaskNo)
+# def getAllFriends():
+# 	select_maxTaskNo = "SELECT name FROM user JOIN friendsWith ON user.user_id=friendsWith.user2 WHERE friendsWith.user1=2 GROUP BY friendsWith.user2;"
+# 	cur.execute(select_maxTaskNo)
 
-	for i in cur:
-		highest = i
-		break
+# 	for i in cur:
+# 		highest = i
+# 		break
 	
-	if highest[0]==None:
-		return 0
-	return (highest[0])
+# 	if highest[0]==None:
+# 		return 0
+# 	return (highest[0])
+
+def getFriends(userChoice):
+    friends = {} # stores friends of user
+    # get all friends of user
+    query = f"select user2, name from friendsWith join user on user_id = user2 where user1 = {userChoice}"
+    cur.execute(query)
+    for row in cur.fetchall():
+        id = row[0]
+        name = row[1]
+        # add each friend to dictionary
+        friends[id] = name
+
+    return friends
 
 
 def addExpense(userChoice, populatedExpenses):
@@ -52,15 +65,29 @@ def addExpense(userChoice, populatedExpenses):
         addExpenseOption = input("Enter choice: ")
 
         if addExpenseOption == '1':
-            #TODO: Add expense attributes inputs here
-            print("Add Expense with a Friend still WIP!")
+
+            print("List of Friends: \n")
+            allFriends = getFriends()
+
+            # display all users
+            for id, friend in allFriends:
+                # id = row[0]
+                # name = row[1]
+                # populatedUsers[id] = name
+                # print each instance to the console
+                print(f"{id} - {friend}")
+
+            # users can select a user to log in from list of users
+            # in the tuple [0] is ID and [1] is name
+            friend_id = int(input("\nSelect a friend id: "))
+            # print(userChoice)
+
 
             total_value = input("Enter total expenses: ")
             split_method = input("Split Method (custom or equal):")
             cash_flow = input("Cash Flow:")
             expense_name = input("Enter expense label: ")
 
-            
             friend_name = input("Enter friend name:")
 
 

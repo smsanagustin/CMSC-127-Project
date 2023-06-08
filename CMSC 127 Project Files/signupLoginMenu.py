@@ -74,7 +74,7 @@ def mainPage(userChoice,userName):
         elif managerChoice == '2':
             import friends
             #params should be current user pk and users table?
-            friends.friendsManager(userChoice, populatedUsers)
+            friends.friendsManager(userChoice, userName)
             break
         elif managerChoice == '3':
             import groups
