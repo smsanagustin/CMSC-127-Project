@@ -1,5 +1,5 @@
 -- create database
-DROP DATABASE IF EXISTS `cmsc127group3`;
+-- DROP DATABASE IF EXISTS `cmsc127group3`;
 CREATE DATABASE IF NOT EXISTS `cmsc127group3`;
 use cmsc127group3;
 
