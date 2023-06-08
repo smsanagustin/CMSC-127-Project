@@ -18,7 +18,7 @@ cur  = con.cursor()
 with open('Project_Dependencies.sql', 'r') as sql_file:
     result_iterator = cur.execute(sql_file.read(), multi=True) # reads content of the sql file
 
-con.commit()
+# con.commit()
 
 #separate function call module to stop iterating mainMenuLoop if imported from other modules
 signupLoginMenu.mainMenuLoop()
