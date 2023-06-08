@@ -41,7 +41,7 @@ def addFriend(userChoice):
             print("Friend does not exist!")
         
     # add friend as users friend
-    query = f"INSERT INTO (user1, user2) friendsWith VALUES ({userChoice},{idOfFriendToAdd})"
+    query = f"INSERT INTO friendsWith (user1, user2) VALUES ({userChoice},{idOfFriendToAdd})"
     cur.execute(query)
 
     mariadb_connect.commit()
@@ -111,3 +111,5 @@ def friendsManager(userChoice):
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
+
+friendsManager(4)
