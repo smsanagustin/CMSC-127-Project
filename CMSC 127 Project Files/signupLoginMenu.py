@@ -14,7 +14,7 @@ cur = mariadb_connection.cursor()
 #populatedUsers = ["Silent Marc","Mae Laban but e","Jon w/o h"]
 populatedUsers = []
 populatedExpenses = []
-populatedGroups = []
+# populatedGroups = []
 
 
 def login():
@@ -77,7 +77,7 @@ def mainPage(userChoice,userName):
         elif managerChoice == '3':
             import groups
             #params should be current user pk and groups table?
-            groups.groupsManager(userChoice, populatedGroups)
+            groups.groupsManager(userChoice, userName)
             break
         elif managerChoice == '0':
             mainMenuLoop()
