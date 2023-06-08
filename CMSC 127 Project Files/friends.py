@@ -7,7 +7,9 @@ userInstance = {
 def addFriend(populatedUsers):
     print("Add friend still WIP!")
 
-    #TODO: Add friend details here
+    #TODO: Add friend details here    # for res in result_iterator:
+    #     print("Running query: ", res)  # Will print out a short representation of the query
+    #     print(f"Affected {res.rowcount} rows" )
 
 def deleteFriend(populatedUsers):
     print("Delete friend still WIP!")

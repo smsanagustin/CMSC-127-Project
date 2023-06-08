@@ -1,12 +1,11 @@
 import expenses
 import friends
 import groups
-
 import mysql.connector
 
 mariadb_connection = mysql.connector.connect(
-    user="db_user",
-    password="db_user_passwd",
+    user="root",
+    password="ilove127",
     host="localhost",
     database="cmsc127group3")
 
