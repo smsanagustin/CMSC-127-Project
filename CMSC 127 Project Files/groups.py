@@ -8,12 +8,22 @@ mariadb_connection = mysql.connector.connect(
 
 cur = mariadb_connection.cursor()
 
-
-def addGroup():
-    # print("Add group still WIP!")
-    group_name = input("Enter groupname: ")
+def getGroups():
+    groups = {}
     try: 
         #TODO: insert new user tuple sql query here
+        query = f"SELECT * FROM grp"
+        cur.execute(query)
+        for group in cur:
+            groups[group[0]] = group[1]
+        return groups
+    except mysql.connector.Error as e: 
+        print(f"Error: {e}")    
+
+def addGroup():
+    print("\t-----ADDING-----\n")
+    group_name = input("Enter groupname: ")
+    try: 
         query = f"INSERT INTO grp (group_name) VALUES ('{group_name}')"
         cur.execute(query)
         mariadb_connection.commit()
@@ -22,12 +32,26 @@ def addGroup():
         print(f"Error: {e}")
 
 def deleteGroup():
-    print("Delete group still WIP!")
+    groups = getGroups()
+    for key, value in groups.items():
+        print(key,"-",value)
 
-    #TODO: Request for the groupID to be deleted
+    print("\t-----DELETING-----\n")
+    groupToDelete = int(input("Enter group id: "))
+    if groupToDelete not in groups.keys():
+        print("The group is not existing!")
+    else:
+        query = f"DELETE FROM grp WHERE group_id = {groupToDelete}"
+        cur.execute(query)
+        mariadb_connection.commit()
+        print("Succecfully deleted group",groups[groupToDelete])
+
 
 def searchGroup():
-    print("Search group still WIP!")
+    groups = getGroups()
+
+    print("\t-----SEARCHING-----\n")
+    groupToDisplay = int(input("Enter group id"))
 
     #TODO: Request for the groupID to be searched
     #then display the details of the group

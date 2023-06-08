@@ -12,15 +12,13 @@ mariadb_connection = mysql.connector.connect(
 cur = mariadb_connection.cursor()
 
 #populatedUsers = ["Silent Marc","Mae Laban but e","Jon w/o h"]
-populatedUsers = []
+populatedUsers = {}
 populatedExpenses = []
 # populatedGroups = []
 
 
 def login():
-    
     while True:
-        
         # shows a list of users
         query = "SELECT user_id, name FROM user"
         cur.execute(query)
@@ -29,23 +27,23 @@ def login():
         for row in cur.fetchall():
             id = row[0]
             name = row[1]
-            populatedUsers.append(row)
+            populatedUsers[id] = name
             # print each instance to the console
             print(f"{id} - {name}")
 
-
         # users can select a user to log in from list of users
         # in the tuple [0] is ID and [1] is name
-        userChoice = input("\nSelect User: ") 
+        userChoice = int(input("\nSelect User: "))
         print(userChoice)
-        if int(userChoice) > len(populatedUsers) or int(userChoice) < 0:
+
+        if userChoice not in populatedUsers.keys():
             print("Invalid Input")
         elif userChoice == '0':
             mainMenuLoop()
             break
         else:
-            print("\nSuccessfully Logged In:",populatedUsers[int(userChoice)-1][1])
-            mainPage(populatedUsers[int(userChoice)-1][0],populatedUsers[int(userChoice)-1][1])
+            print(f"\nSuccessfully Logged In: {populatedUsers[userChoice]}")
+            mainPage(userChoice, populatedUsers[userChoice])
             break
 
 

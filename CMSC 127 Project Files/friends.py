@@ -4,7 +4,7 @@ import mysql.connector
 
 mariadb_connect = mysql.connector.connect(
     user="root",
-    password="ilove127",
+    password="elvinbautista",
     host="localhost",
     database="cmsc127group3"
 )
@@ -111,5 +111,3 @@ def friendsManager(userChoice):
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
-
-friendsManager(4)
