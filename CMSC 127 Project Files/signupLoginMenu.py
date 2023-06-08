@@ -35,8 +35,13 @@ def login():
 
         # users can select a user to log in from list of users
         # in the tuple [0] is ID and [1] is name
-        userChoice = int(input("\nSelect User: "))
-        print(userChoice)
+        while True:
+            try:
+                userChoice = int(input("\nSelect User: "))
+                print(userChoice)
+                break
+            except ValueError:
+                print("Invalid input. Please enter integers only!")
 
         if userChoice not in populatedUsers.keys():
             print("Invalid Input")
