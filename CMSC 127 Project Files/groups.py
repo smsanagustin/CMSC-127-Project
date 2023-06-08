@@ -20,6 +20,12 @@ def getGroups():
     except mysql.connector.Error as e: 
         print(f"Error: {e}")    
 
+def viewAllGroups():
+    groups = getGroups()
+    
+    for key, value in groups.items():
+        print(key, "-", value)
+
 def addGroup():
     print("\t-----ADDING-----\n")
     group_name = input("Enter groupname: ")
@@ -51,23 +57,58 @@ def searchGroup():
     groups = getGroups()
 
     print("\t-----SEARCHING-----\n")
-    groupToDisplay = int(input("Enter group id"))
+    groupToDisplay = int(input("Enter group id: "))
 
-    #TODO: Request for the groupID to be searched
-    #then display the details of the group
+    if groupToDisplay not in groups.keys():
+        print("The group is not existing!")
+    else:
+        print(groupToDisplay,"-",groups[groupToDisplay])
 
 def updateGroup():
+    groups = getGroups()
+    print("\t-----UPDATING-----\n")
+    for key, value in groups.items():
+        print(key,"-",value)
+    group_id = int(input("Enter group id: "))
+
+    if group_id not in groups.keys():
+        print("The group is not existing!")
+    else:
+        print(f"\t-----UPDATING {groups[group_id]}-----\n")
+        while True:
+            print(f"[1] Add a friend to a {groups[group_id]}")
+            print(f"[2] Remove a friend from {groups[group_id]}")
+            print(f"[3] Rename {groups[group_id]}")
+            print("[0] Back")
+            action = int(input("Enter the number of the action you wish to perform: "))
+
+            if action == 0:
+                break
+            elif action == 1:
+                addFriendToGroup()
+            elif action == 2:
+                removeFriendFromGroup()
+            elif action == 3:
+                renameGroup(group_id, groups[group_id])
+            else:
+                print("Invalid Choice!")
+
+
+    # Rename the group, add friend to the group, remove friend to a group
+
+def addFriendToGroup(groupId):
+    idOfFriendToRemove = int(input("Enter user ID: "))
+
+def removeFriendFromGroup(groupId):
     print("Update group still WIP!")
+    
+def renameGroup(groupId, oldGroupName):
+    newGroupName = input("Enter new group name: ")
+    query = f"UPDATE grp SET group_name = '{newGroupName}' WHERE group_id = {groupId}"
+    cur.execute(query)
+    mariadb_connection.commit()
+    print(f"Group {oldGroupName} has been successfully renamed to {newGroupName}")
 
-    #TODO: Request for the groupID to be updated
-    #then display input fields for the new values
-
-def addFriendtoGroup():
-    print("Update group still WIP!")
-
-    #TODO: Request for the groupID to be updated
-    #TODO: Request for the userID to be added
-    #then display prompt if successful
 
 
 def groupsManager(userChoice, userName):
@@ -76,8 +117,8 @@ def groupsManager(userChoice, userName):
             "[1] Add Group\n"
             "[2] Delete Group\n"
             "[3] Search Group\n"
-            "[4] Update Group\n"
-            "[5] Add Friend to a Group\n"
+            "[4] View All Groups\n"
+            "[5] Update Group\n"
             "[0] Back"
             )
         groupManagerOption = input("\nEnter choice: ")
@@ -94,8 +135,8 @@ def groupsManager(userChoice, userName):
         elif groupManagerOption == '3':
             searchGroup()
         elif groupManagerOption == '4':
-            updateGroup()
+            viewAllGroups()
         elif groupManagerOption == '5':
-            addFriendtoGroup()
+            updateGroup()
         else:
             print("Invalid Input!")
