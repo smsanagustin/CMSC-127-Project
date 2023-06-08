@@ -20,11 +20,13 @@ populatedGroups = []
 def login():
     
     while True:
+        # shows a list of users
         print('\nList of Users')
         for x in range(0, len(populatedUsers)):
             print('['+ str(x+1) +']', populatedUsers[x]['name'])
         print("[0] Back")
 
+        # users can select a user to log in from list of users
         userChoice = input("\nSelect User: ") 
         if int(userChoice) > len(populatedUsers) or int(userChoice) < 0:
             print("Invalid Input")
@@ -75,23 +77,16 @@ def mainPage(userChoice):
 
 
 def signup():
+    inputName = input("Name: ")
     inputUsername = input("Enter Username: ")
+    inputPassword = input("Enter password: ")
 
-    # userInstance = {
-    #     #TODO: Fill this up w/ user attributes/columns
-    #     # Name serves as the PK? for now
-    #     # 'name' : inputUsername:
-        
-        
-    #     }
-    
-    # populatedUsers.append(userInstance) 
-
-
-    #TODO: insert new user tuple sql query here
     try: 
-        create_cursor.execute("INSERT INTO employees (first_name,last_name) VALUES (?, ?)", ("Maria","DB")) 
-    except mariadb.Error as e: 
+        #TODO: insert new user tuple sql query here
+        query = f"INSERT INTO user (name, username, password) VALUES ('{inputName}', '{inputUsername}', '{inputPassword}')"
+        create_cursor.execute(query)
+        mariadb_connection.commit()
+    except mysql.connector.Error as e: 
         print(f"Error: {e}")
     mainMenuLoop()
 

@@ -1,3 +1,4 @@
+# user of login info
 userInstance = {
     # TODO: Fill this up w/ user attributes/columns
     # Name serves as the PK for now?
