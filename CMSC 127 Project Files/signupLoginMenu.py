@@ -34,17 +34,18 @@ def login():
             populatedUsers[id] = name
             # print each instance to the console
             print(f"{id} - {name}")
+        print("0 - Back")
 
         # users can select a user to log in from list of users
         # in the tuple [0] is ID and [1] is name
         userChoice = int(input("\nSelect User: "))
         print(userChoice)
 
-        if userChoice not in populatedUsers.keys():
-            print("Invalid Input")
-        elif userChoice == '0':
+        if userChoice == 0:
             mainMenuLoop()
             break
+        elif userChoice not in populatedUsers.keys():
+            print("Invalid Input")
         else:
             print(f"\nSuccessfully Logged In: {populatedUsers[userChoice]}")
             mainPage(userChoice, populatedUsers[userChoice])
@@ -69,7 +70,7 @@ def mainPage(userChoice,userName):
         if managerChoice == '1':
             import expenses
             #params should be current user pk and expense table?
-            expenses.expensesManager(userChoice, populatedExpenses)
+            expenses.expensesManager(userChoice, userName)
             break
         elif managerChoice == '2':
             import friends

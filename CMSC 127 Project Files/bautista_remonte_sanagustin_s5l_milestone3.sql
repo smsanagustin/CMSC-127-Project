@@ -24,7 +24,7 @@ CREATE TABLE expense(
     date_incurred DATE,
     isSettled BOOLEAN,
     split_method VARCHAR(6) NOT NULL CHECK (split_method IN ('custom', 'equal')),
-    cash_flow INT(10),
+    cash_flow DECIMAL(5,2),
     expense_name VARCHAR(60) NOT NULL,
     user_id INT(10) NOT NULL,
     friend_id INT(10),
@@ -75,7 +75,7 @@ INSERT INTO user (name,username,password) VALUES("Mae SA", "jaremonte","password
 -- user1 should be friends with user2 first before they can have a shared expense
 INSERT INTO friendsWith (user1,user2) VALUES (1,2);
 INSERT INTO friendsWith (user1,user2) VALUES (2,1);
-
+INSERT INTO friendsWith (user1,user2) VALUES (3,2);
 INSERT INTO friendsWith (user1,user2) VALUES (2,3);
 
 
