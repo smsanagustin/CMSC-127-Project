@@ -49,7 +49,13 @@ def addFriend(userChoice):
 
     # ask user which friend to add
     while True: 
-        idOfFriendToAdd = int(input("Enter ID of the friend you want to add (Enter 0 to exit): "))
+        while True:
+            try:
+                idOfFriendToAdd = int(input("Enter ID of the friend you want to add (Enter 0 to exit): "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter an integer only!")
+
 
         # add friend as users friend if its in the list
         if idOfFriendToAdd in listOfFriendsToAdd:
