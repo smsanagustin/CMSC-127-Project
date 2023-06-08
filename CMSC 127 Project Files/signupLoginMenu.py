@@ -2,9 +2,9 @@ import expenses
 import friends
 import groups
 
-import mariadb
+import mysql.connector
 
-mariadb_connection = mariadb.connect(
+mariadb_connection = mysql.connector.connect(
     user="db_user",
     password="db_user_passwd",
     host="localhost",
