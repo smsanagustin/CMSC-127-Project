@@ -118,5 +118,3 @@ def friendsManager(userChoice):
             print("Invalid Input!")
 
             return
-
-friendsManager(4)
