@@ -1,32 +1,44 @@
-groupInstance = {
-    #TODO: Fill this up w/ group attributes/columns
-    'groupID': '',
-    'name' : ''
-}
+import mysql.connector
 
-def addGroup(populatedGroups):
-    print("Add group still WIP!")
+mariadb_connection = mysql.connector.connect(
+    user="root",
+    password="elvinbautista",
+    host="localhost",
+    database="cmsc127group3")
 
-    #TODO: Add group inputs here
+cur = mariadb_connection.cursor()
 
-def deleteGroup(populatedGroups):
+
+def addGroup():
+    # print("Add group still WIP!")
+    group_name = input("Enter groupname: ")
+    try: 
+        #TODO: insert new user tuple sql query here
+        query = f"INSERT INTO grp (group_name) VALUES ('{group_name}')"
+        cur.execute(query)
+        mariadb_connection.commit()
+        print(group_name,"has been created")
+    except mysql.connector.Error as e: 
+        print(f"Error: {e}")
+
+def deleteGroup():
     print("Delete group still WIP!")
 
     #TODO: Request for the groupID to be deleted
 
-def searchGroup(populatedGroups):
+def searchGroup():
     print("Search group still WIP!")
 
     #TODO: Request for the groupID to be searched
     #then display the details of the group
 
-def updateGroup(populatedGroups):
+def updateGroup():
     print("Update group still WIP!")
 
     #TODO: Request for the groupID to be updated
     #then display input fields for the new values
 
-def addFriendtoGroup(populatedGroups):
+def addFriendtoGroup():
     print("Update group still WIP!")
 
     #TODO: Request for the groupID to be updated
@@ -34,7 +46,7 @@ def addFriendtoGroup(populatedGroups):
     #then display prompt if successful
 
 
-def groupsManager(userChoice, populatedGroups):
+def groupsManager(userChoice, userName):
     while True:
         print("\n What would you like to do?\n"
             "[1] Add Group\n"
@@ -49,41 +61,17 @@ def groupsManager(userChoice, populatedGroups):
         if groupManagerOption == '0':
 
             import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
+            signupLoginMenu.mainPage(userChoice,userName)
             break
         elif groupManagerOption == '1':
-            addGroup(populatedGroups)
-
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            addGroup()
         elif groupManagerOption == '2':
-            deleteGroup(populatedGroups)
-
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            deleteGroup()
         elif groupManagerOption == '3':
-            searchGroup(populatedGroups)
-
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            searchGroup()
         elif groupManagerOption == '4':
-            updateGroup(populatedGroups)
-
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            updateGroup()
         elif groupManagerOption == '5':
-            addFriendtoGroup(populatedGroups)
-
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break
+            addFriendtoGroup()
         else:
             print("Invalid Input!")
-
-            import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
-            break

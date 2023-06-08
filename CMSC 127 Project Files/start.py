@@ -5,7 +5,7 @@ import signupLoginMenu
 # connects to a mariadb database
 con = mysql.connector.connect(
     user="root",
-    password="ilove127",
+    password="elvinbautista",
     host="localhost",
     port= 3306,
     )

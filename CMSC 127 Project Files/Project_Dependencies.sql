@@ -50,6 +50,3 @@ CREATE TABLE IF NOT EXISTS belongsTo(
     CONSTRAINT fk_belongsto_group_id FOREIGN KEY (group_id) REFERENCES grp (group_id),
     CONSTRAINT belongsTo_user_id UNIQUE(`user_id`, `group_id`)
 );
-
--- add an initial user
-INSERT INTO user (user_id, name, username, password) VALUES(0, "admin", "admin", "admin");
