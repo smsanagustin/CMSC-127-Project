@@ -165,7 +165,38 @@ def searchFriend(userChoice):
 
 # shows all friends with outstanding balance
 def showFriendsWithOutBalance(userChoice):
-    print("hello")
+
+    friendsWithBalance = []
+
+    # get all friends with balance 
+    query = f"SELECT name FROM user JOIN expense ON user.user_id=friend_id WHERE expense.user_id = {userChoice} AND cash_flow > 0"
+    cur.execute(query)
+
+    results = cur.fetchall()
+
+    # populate the friends with balance list using results from query
+    for row in results:
+        friendsWithBalance.append(row[0])
+
+    # get all friends with balance (where their id is user_id instead of friend_id)
+    query = f"SELECT name FROM user JOIN expense ON user.user_id=expense.user_id WHERE expense.friend_id = {userChoice} AND cash_flow < 0"
+    cur.execute(query)
+
+    results = cur.fetchall()
+
+    # populate the friends with balance list using results from query
+    for row in results:
+        friendsWithBalance.append(row[0])
+
+    # print each friend in the list
+    if len(friendsWithBalance) > 0:
+        print("Friends with outstanding balance: ")
+        for friend in friendsWithBalance:
+            print(f"{friend}\n")
+    else:
+        print("No friends with outstanding balance!")
+
+    
 
 def viewAllFriends(userChoice):
     userFriends = getFriends(userChoice)
