@@ -1,11 +1,25 @@
-expenseInstance = {
-    #TODO: Fill this up w/ expense attributes/columns
-    'expenseID' : '',
-    'total' : 0
-}
+# expenseInstance = {
+#     #TODO: Fill this up w/ expense attributes/columns
+#     'expenseID' : '',
+#     'total' : 0
+# }
+
+import mysql.connector
+
+# connects to a mariadb database
+mariadb_connection = mysql.connector.connect(
+    user="root",
+    password="ilove127",
+    host="localhost",
+    port= 3306,
+    )
+
+# perform database operations here:
+# used to execute sql queries on the databases
+create_cursor  = mariadb_connection.cursor()
 
 
-def addExpense(populatedExpenses):
+def addExpense(userChoice, populatedExpenses):
     while True:
         print("\nWho would you share the expense with?\n"
             "[1] To a Friend\n" 
@@ -16,26 +30,52 @@ def addExpense(populatedExpenses):
         if addExpenseOption == '1':
             #TODO: Add expense attributes inputs here
             print("Add Expense with a Friend still WIP!")
+
+            split_method = input("Split Method (custom or equal):")
+            cash_flow = input("Cash Flow:")
+            expense_name = input("Enter expense label: ")
+
+            
+            friend_name = input("Enter friend name:")
+
+
+
+            try: 
+                #TODO: insert new user tuple sql query here
+                query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES ('{total_value}', 'CURDATE()', '{inputPassword}','{inputName}', '{CURDATE()}', '{inputPassword}','{inputName}', '{CURDATE()}')"
+                create_cursor.execute(query)
+                mariadb_connection.commit()
+            except mysql.connector.Error as e: 
+                print(f"Error: {e}")
+
+    
+
+
             break
         elif addExpenseOption == '2':
             #TODO: Add expense attributes inputs here
             print("Add Expense with a Group still WIP!")
+
+
+
+
+
             break
         else: 
             print("Invalid Input")
 
-def deleteExpense(populatedExpenses):
+def deleteExpense(userChoice, populatedExpenses):
     print("Delete Expense still WIP!")
 
     #TODO: Request for the expenseID to be deleted
 
-def searchExpense(populatedExpenses):
+def searchExpense(userChoice, populatedExpenses):
     print("Search Expense still WIP!")
 
     #TODO: Request for the expenseID to be searched
     #then display the details of the expense
 
-def updateExpense(populatedExpenses):
+def updateExpense(userChoice, populatedExpenses):
     print("Update Expense still WIP!")
 
     #TODO: Request for the expenseID to be updated
@@ -59,25 +99,25 @@ def expensesManager(userChoice, populatedExpenses):
             signupLoginMenu.mainPage(userChoice)
             break
         elif expenseManagerOption == '1':
-            addExpense(populatedExpenses)
+            addExpense(userChoice, populatedExpenses)
     
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
         elif expenseManagerOption == '2':
-            deleteExpense(populatedExpenses)
+            deleteExpense(userChoice, populatedExpenses)
             
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
         elif expenseManagerOption == '3':
-            searchExpense(populatedExpenses)
+            searchExpense(userChoice, populatedExpenses)
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
         elif expenseManagerOption == '4':
-            updateExpense(populatedExpenses)
+            updateExpense(userChoice, populatedExpenses)
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
