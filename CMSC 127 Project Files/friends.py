@@ -163,12 +163,28 @@ def searchFriend(userChoice):
 #     #TODO: Request for the friendID to be updated
 #     #then display input fields for the new values
 
+# shows all friends with outstanding balance
+def showFriendsWithOutBalance(userChoice):
+    print("hello")
+
+def viewAllFriends(userChoice):
+    userFriends = getFriends(userChoice)
+
+    if len(userFriends):
+        print("Your friends:")
+        for id in userFriends.keys():
+            print(f"{userFriends[id]}")
+    else:
+        print("You have no friends yet.")
+
 def friendsManager(userChoice, userName):
     while True:
         print("\n What would you like to do?\n"
             "[1] Add Friend\n"
             "[2] Delete Friend\n"
             "[3] Search Friend\n"
+            "[4] View all friends with outstanding balance\n"
+            "[5] View all friends\n"
             # "[4] Update Friend Details\n"
             "[0] Back"
             )
@@ -197,6 +213,20 @@ def friendsManager(userChoice, userName):
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice, userName)
             break
+        elif friendManagerOption == '4':
+            showFriendsWithOutBalance(userChoice)
+
+            import signupLoginMenu
+            signupLoginMenu.mainPage(userChoice, userName)
+            break
+
+        elif friendManagerOption == '5':
+            viewAllFriends(userChoice)
+            
+            import signupLoginMenu
+            signupLoginMenu.mainPage(userChoice, userName)
+            break
+
         # elif friendManagerOption == '4':
         #     updateFriend(populatedUsers)
 
