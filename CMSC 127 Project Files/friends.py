@@ -40,13 +40,63 @@ def addFriend(userChoice):
         else:
             print("Friend does not exist!")
         
+    # add friend as users friend (if they're not friends yet)
+    query = f'''
+        INSERT INTO friendsWith (user1, user2)
+        SELECT {userChoice}, {idOfFriendToAdd}
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM friendsWith
+            WHERE (user1 = {userChoice} AND user2 = {idOfFriendToAdd})
+        );
+        '''
+    cur.execute(query)
+    
+    query = f'''
+        INSERT INTO friendsWith (user1, user2)
+        SELECT {idOfFriendToAdd}, {userChoice}
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM friendsWith
+            WHERE (user1 = {idOfFriendToAdd} AND user2 = {userChoice})
+        );
+        '''
+    cur.execute(query)
+    mariadb_connect.commit()
+    
+    print# get all users from the db
+    query = "SELECT user_id, name FROM user"
+    cur.execute(query)
+
+    # create list of friends that can be added
+    listOfFriendsToAdd = []
+
+    # display all users
+    for row in cur.fetchall():
+        id = row[0]
+        name = row[1]
+
+        # print user if it's not the logged in user or the admin
+        if userChoice != id and id !=1: 
+            listOfFriendsToAdd.append(id)
+            print(f"ID: {id}, Name: {name}")
+
+    # ask user which friend to add
+    while True:
+        idOfFriendToAdd = int(input("Enter ID of the friend you want to add: "))
+
+        if idOfFriendToAdd in listOfFriendsToAdd:
+            break
+        else:
+            print("Friend does not exist!")
+        
     # add friend as users friend
     query = f"INSERT INTO friendsWith (user1, user2) VALUES ({userChoice},{idOfFriendToAdd})"
     cur.execute(query)
 
     mariadb_connect.commit()
     
-    print("Added friend successfully!")
+    print("Added friend successfully!")("Added friend successfully!")
 
 def deleteFriend(populatedUsers):
     print("Delete friend still WIP!")
@@ -111,5 +161,3 @@ def friendsManager(userChoice):
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice)
             break
-
-friendsManager(4)
