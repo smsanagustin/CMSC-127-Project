@@ -97,11 +97,13 @@ def deleteFriend(userChoice):
             print("Removing friend...")
 
             # sql query to remove friend
-            query = (f"SELECT FROM friendsWith WHERE user1 = {userChoice} and user2 = {idOfFriendToRemove}")
+            query = (f"DELETE FROM friendsWith WHERE user1 = {userChoice} and user2 = {idOfFriendToRemove}")
             cur.execute(query)
 
-            query = (f"SELECT FROM friendsWith WHERE user1 = {idOfFriendToRemove} and user2 = {userChoice}")
+            query = (f"DELETE FROM friendsWith WHERE user1 = {idOfFriendToRemove} and user2 = {userChoice}")
             cur.execute(query)
+
+            mariadb_connect.commit()
 
             print("Removed friend successfully!")
             break
@@ -111,12 +113,34 @@ def deleteFriend(userChoice):
             print("Exiting...")
             break
         else:
-            print("Friend does not exist!")
+            print("Friend does not exist!")  
 
-    
+def searchFriend(userChoice):
+    # get user input while friend is not found
+    while True:
+        nameOfFriendToSearch = input("Enter name of friend (Enter 0 to exit): ")
 
-def searchFriend(populatedUsers):
-    print("Search friend still WIP!")
+        print("Finding friend...")
+
+        # query to find friend
+        query = f"select user_id, name from friendsWith join user on user2=user_id where user1 = {userChoice} AND name LIKE '%{nameOfFriendToSearch}%'"
+        cur.execute(query)
+
+        # search results from query
+        searchResults = cur.fetchall()
+
+        if len(searchResults) != 0:
+            print("Friend/s found!")
+            for row in searchResults:
+                id = row[0]
+                name = row[1]
+                print(f"{id} - {name}")
+            break
+        elif nameOfFriendToSearch == 0:
+            print("Exiting...")
+            break
+        else:
+            print("Friend not found!")
             
     #TODO: Request for the friendID to be searched
     #display input fields for the friend details
@@ -156,16 +180,16 @@ def friendsManager(userChoice, userName):
             signupLoginMenu.mainPage(userChoice, userName)
             break
         elif friendManagerOption == '3':
-            searchFriend(populatedUsers)
+            searchFriend(userChoice)
             
             import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
+            signupLoginMenu.mainPage(userChoice, userName)
             break
         elif friendManagerOption == '4':
             updateFriend(populatedUsers)
 
             import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
+            signupLoginMenu.mainPage(userChoice, userName)
             break
         else:
             print("Invalid Input!")
