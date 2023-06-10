@@ -1,46 +1,55 @@
 import expenses
 import friends
 import groups
-
 import mysql.connector
 
 mariadb_connection = mysql.connector.connect(
-    user="db_user",
-    password="db_user_passwd",
+    user="root",
+    password="elvinbautista",
     host="localhost",
     database="cmsc127group3")
 
-create_cursor = mariadb_connection.cursor()
+cur = mariadb_connection.cursor()
 
 #populatedUsers = ["Silent Marc","Mae Laban but e","Jon w/o h"]
-populatedUsers = []
+populatedUsers = {}
 populatedExpenses = []
-populatedGroups = []
+# populatedGroups = []
 
 
 def login():
-    
     while True:
-        print('\nList of Users')
-        for x in range(0, len(populatedUsers)):
-            print('['+ str(x+1) +']', populatedUsers[x]['name'])
-        print("[0] Back")
+        # shows a list of users
+        query = "SELECT user_id, name FROM user"
+        cur.execute(query)
 
-        userChoice = input("\nSelect User: ") 
-        if int(userChoice) > len(populatedUsers) or int(userChoice) < 0:
+        # display all users
+        for row in cur.fetchall():
+            id = row[0]
+            name = row[1]
+            populatedUsers[id] = name
+            # print each instance to the console
+            print(f"{id} - {name}")
+
+        # users can select a user to log in from list of users
+        # in the tuple [0] is ID and [1] is name
+        userChoice = int(input("\nSelect User: "))
+        print(userChoice)
+
+        if userChoice not in populatedUsers.keys():
             print("Invalid Input")
         elif userChoice == '0':
             mainMenuLoop()
             break
         else:
-            print("\nSuccessfully Logged In:",populatedUsers[int(userChoice)-1]['name'])
-            mainPage(populatedUsers[int(userChoice)-1]['name'])
+            print(f"\nSuccessfully Logged In: {populatedUsers[userChoice]}")
+            mainPage(userChoice, populatedUsers[userChoice])
             break
 
 
 #NOTE: userChoice should be the PK of the current user?
-def mainPage(userChoice):    
-    print("\nCurrent user is:",userChoice)
+def mainPage(userChoice,userName):    
+    print("\nCurrent user is:",userName)
 
     #select an option to manage a user's expenses, friends, or groups
     while True:
@@ -61,12 +70,12 @@ def mainPage(userChoice):
         elif managerChoice == '2':
             import friends
             #params should be current user pk and users table?
-            friends.friendsManager(userChoice, populatedUsers)
+            friends.friendsManager(userChoice, userName)
             break
         elif managerChoice == '3':
             import groups
             #params should be current user pk and groups table?
-            groups.groupsManager(userChoice, populatedGroups)
+            groups.groupsManager(userChoice, userName)
             break
         elif managerChoice == '0':
             mainMenuLoop()
@@ -76,23 +85,16 @@ def mainPage(userChoice):
 
 
 def signup():
+    inputName = input("Name: ")
     inputUsername = input("Enter Username: ")
+    inputPassword = input("Enter password: ")
 
-    # userInstance = {
-    #     #TODO: Fill this up w/ user attributes/columns
-    #     # Name serves as the PK? for now
-    #     # 'name' : inputUsername:
-        
-        
-    #     }
-    
-    # populatedUsers.append(userInstance) 
-
-
-    #TODO: insert new user tuple sql query here
     try: 
-        create_cursor.execute("INSERT INTO employees (first_name,last_name) VALUES (?, ?)", ("Maria","DB")) 
-    except mariadb.Error as e: 
+        #TODO: insert new user tuple sql query here
+        query = f"INSERT INTO user (name, username, password) VALUES ('{inputName}', '{inputUsername}', '{inputPassword}')"
+        cur.execute(query)
+        mariadb_connection.commit()
+    except mysql.connector.Error as e: 
         print(f"Error: {e}")
     mainMenuLoop()
 
