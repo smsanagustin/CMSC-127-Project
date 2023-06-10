@@ -4,6 +4,25 @@ expenseInstance = {
     'total' : 0
 }
 
+# get all expense
+def getAllExpenses(userChoice):
+    # stores user's expenses
+    usersExpenses = {}
+    
+    # get all expenses of currently logged in user
+    query = f"select expense_id, expense_name from expense where user_id = $userChoice"
+    cur.execute()
+
+    allExpenses = cur.fetchall()
+
+    for row in cur.fetchall:
+        expense_id = row[0]
+        group_name = row[1]
+
+        usersExpenses[expense_id] = group_name
+
+    return(usersExpenses)
+
 
 def addExpense(populatedExpenses):
     while True:
