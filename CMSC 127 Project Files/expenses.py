@@ -3,7 +3,7 @@ import friends
 import mysql.connector
 
 # connects to a mariadb database
-con = mysql.connector.connect(
+connection = mysql.connector.connect(
     user="root",
     password="ilove127",
     host="localhost",
@@ -12,14 +12,14 @@ con = mysql.connector.connect(
 
 # perform database operations here:
 # used to execute sql queries on the databases
-cur  = con.cursor()
+cursor  = connection.cursor()
 
 def getGroupMembers(groupChoice):
     members = {} # stores friends of user
     # get all friends of user
     query = f"select user.user_id, name from user join belongsTo where user.user_id = belongsTo.user_id and group_id = {groupChoice};"
-    cur.execute(query)
-    for row in cur.fetchall():
+    cursor.execute(query)
+    for row in cursor.fetchall():
         id = row[0]
         name = row[1]
         # add each friend to list
@@ -31,8 +31,8 @@ def getAffiliatedGroups(userChoice):
     groups = {} # stores friends of user
     # get all friends of user
     query = f"select grp.group_id, grp.group_name from grp join belongsTo where grp.group_id = belongsTo.group_id and user_id = {userChoice}"
-    cur.execute(query)
-    for row in cur.fetchall():
+    cursor.execute(query)
+    for row in cursor.fetchall():
         id = row[0]
         name = row[1]
         # add each friend to list
@@ -47,9 +47,9 @@ def getAllExpenses(userChoice):
     
     # get all expenses of currently logged in user
     query = f"select expense_id, expense_name from expense where user_id = {userChoice}"
-    cur.execute(query)
+    cursor.execute(query)
 
-    allExpenses = cur.fetchall()
+    allExpenses = cursor.fetchall()
 
     for row in allExpenses:
         expense_id = row[0]
@@ -62,9 +62,9 @@ def getAllExpenses(userChoice):
 
 def getMaxExpenseId():
 	select_maxTaskNo = "SELECT MAX(expense_id) FROM expense"
-	cur.execute(select_maxTaskNo)
+	cursor.execute(select_maxTaskNo)
 
-	for i in cur:
+	for i in cursor:
 		highest = i
 		break
 	
@@ -137,8 +137,8 @@ def addExpense(userChoice):
                     # query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES ({total_value},CURDATE(),false,{split_method},{split_value},{expense_name},{userChoice},{friend_id})"
                     query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{userChoice},{friend_id});"
                     # INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES (200,CURDATE(),0,'equal',+100,'Mcdo',1,2)
-                    cur.execute(query)
-                    con.commit()
+                    cursor.execute(query)
+                    connection.commit()
                 except mysql.connector.Error as e: 
                     print(f"Error: {e}")
                 break
@@ -194,7 +194,7 @@ def addExpense(userChoice):
 
                     expense_name = input("Enter expense label: ")
                     query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{userChoice})"
-                    cur.execute(query)
+                    cursor.execute(query)
 
 
                     # insert select sql query here
@@ -210,7 +210,7 @@ def addExpense(userChoice):
                             split_value = (total_value*split_percentage_list[id]*-1)
 
                         query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{id})"
-                        cur.execute(query)
+                        cursor.execute(query)
 
                 # splitting expenses with a group equally    
                 elif split_method == 'equal':
@@ -224,7 +224,7 @@ def addExpense(userChoice):
                             split_value = (total_value/memberCount*-1)
 
                         query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{id})"
-                        cur.execute(query)
+                        cursor.execute(query)
 
                 else:
                     print("Invalid input!")
@@ -240,8 +240,8 @@ def addExpense(userChoice):
                     # INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES (900, CURDATE(),0,"equal",600,"1st Group Expense",1);
                     # cur.execute(query)
                     # con.commit()
-                    cur.execute(query2)
-                    con.commit()
+                    cursor.execute(query2)
+                    connection.commit()
                 except mysql.connector.Error as e: 
                     print(f"Error: {e}")
                 break
@@ -273,9 +273,9 @@ def deleteExpense(userChoice):
             # delete expense if it's in the list of user's expense
             if idOfExpenseToDelete in usersExpenses.keys():
                 query = f"DELETE FROM expense WHERE expense_id = {idOfExpenseToDelete}"
-                cur.execute(query)
+                cursor.execute(query)
 
-                con.commit()
+                connection.commit()
 
                 print("Successfully delete expense!")
 
@@ -297,9 +297,9 @@ def searchExpense(userChoice):
 
     # query from db using user input
     query = f"SELECT expense_name FROM expense WHERE expense_name LIKE '%{nameOfExpenseToSearch}%' AND user_id = {userChoice}"
-    cur.execute(query)
+    cursor.execute(query)
 
-    searchResults = cur.fetchall()
+    searchResults = cursor.fetchall()
 
     # if there are results from search, print each result
     if len(searchResults) > 0:
@@ -331,9 +331,9 @@ def updateExpense(userChoice):
             if idOfExpenseToUpdate in usersExpenses.keys():
                 # query to update
                 query = f"UPDATE expense SET isSettled = 1 WHERE expense_id = {idOfExpenseToUpdate}"
-                cur.execute(query)
+                cursor.execute(query)
 
-                con.commit()
+                connection.commit()
                 print("Expense successfully updated!")
                 break
             
@@ -361,7 +361,7 @@ def expensesManager(userChoice, userName):
 
         if expenseManagerOption == '0':
             # close the connection
-            
+
 
             signupLoginMenu.mainPage(userChoice, userName)
             break

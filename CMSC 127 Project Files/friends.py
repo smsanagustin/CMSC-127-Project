@@ -2,7 +2,7 @@
 # userChoice - id of the logged in user
 import mysql.connector
 
-mariadb_connect = mysql.connector.connect(
+connection = mysql.connector.connect(
     user="root",
     password="ilove127",
     host="localhost",
@@ -10,15 +10,15 @@ mariadb_connect = mysql.connector.connect(
 )
 
 # create cursor object
-cur = mariadb_connect.cursor()
+cursor = connection.cursor()
 
 # get user friends
 def getFriends(userChoice):
     friends = {} # stores friends of user
     # get all friends of user
     query = f"select user2, name from friendsWith join user on user_id = user2 where user1 = {userChoice}"
-    cur.execute(query)
-    for row in cur.fetchall():
+    cursor.execute(query)
+    for row in cursor.fetchall():
         id = row[0]
         name = row[1]
         # add each friend to list
@@ -32,13 +32,13 @@ def addFriend(userChoice):
 
     # get all users from the db
     query = "SELECT user_id, name FROM user"
-    cur.execute(query)
+    cursor.execute(query)
 
     # create list of friends that can be added
     listOfFriendsToAdd = []
 
     # display all users
-    for row in cur.fetchall():
+    for row in cursor.fetchall():
         id = row[0]
         name = row[1]
 
@@ -63,12 +63,12 @@ def addFriend(userChoice):
             if idOfFriendToAdd not in userFriends.keys():
                 print(idOfFriendToAdd)
                 query = f"INSERT INTO friendsWith (user1, user2) VALUES ({userChoice}, {idOfFriendToAdd})"
-                cur.execute(query)
+                cursor.execute(query)
                 
                 query = f"INSERT INTO friendsWith (user1, user2) VALUES ({idOfFriendToAdd}, {userChoice})"
-                cur.execute(query)
+                cursor(query)
             
-                mariadb_connect.commit()
+                connection.commit()
 
                 print("Added friend successfully!")
 
@@ -83,7 +83,7 @@ def addFriend(userChoice):
         else:
             print("Friend does not exist!")
 
-    mariadb_connect.commit()
+    connection.commit()
 
 def deleteFriend(userChoice):
     # get users friends
@@ -109,12 +109,12 @@ def deleteFriend(userChoice):
 
             # sql query to remove friend
             query = (f"DELETE FROM friendsWith WHERE user1 = {userChoice} and user2 = {idOfFriendToRemove}")
-            cur.execute(query)
+            cursor.execute(query)
 
             query = (f"DELETE FROM friendsWith WHERE user1 = {idOfFriendToRemove} and user2 = {userChoice}")
-            cur.execute(query)
+            cursor.execute(query)
 
-            mariadb_connect.commit()
+            connection.commit()
 
             print("Removed friend successfully!")
             break
@@ -133,10 +133,10 @@ def searchFriend(userChoice):
 
         # query to find friend
         query = f"select user_id, name from friendsWith join user on user2=user_id where user1 = {userChoice} AND name LIKE '%{nameOfFriendToSearch}%'"
-        cur.execute(query)
+        cursor.execute(query)
 
         # search results from query
-        searchResults = cur.fetchall()
+        searchResults = cursor.fetchall()
 
         if len(searchResults) != 0:
             print("Finding friend...")
@@ -172,9 +172,9 @@ def showFriendsWithOutBalance(userChoice):
 
     # get all friends with balance 
     query = f"SELECT name FROM user JOIN expense ON user.user_id=friend_id WHERE expense.user_id = {userChoice} AND cash_flow > 0"
-    cur.execute(query)
+    cursor.execute(query)
 
-    results = cur.fetchall()
+    results = cursor.fetchall()
 
     # populate the friends with balance list using results from query
     for row in results:
@@ -182,9 +182,9 @@ def showFriendsWithOutBalance(userChoice):
 
     # get all friends with balance (where their id is user_id instead of friend_id)
     query = f"SELECT name FROM user JOIN expense ON user.user_id=expense.user_id WHERE expense.friend_id = {userChoice} AND cash_flow < 0"
-    cur.execute(query)
+    cursor.execute(query)
 
-    results = cur.fetchall()
+    results = cursor.fetchall()
 
     # populate the friends with balance list using results from query
     for row in results:

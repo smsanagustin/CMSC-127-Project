@@ -1,20 +1,20 @@
 import mysql.connector
 
-mariadb_connection = mysql.connector.connect(
+connection = mysql.connector.connect(
     user="root",
     password="ilove127",
     host="localhost",
     database="cmsc127group3")
 
-cur = mariadb_connection.cursor()
+cursor = connection.cursor()
 
 def getGroups():
     groups = {}
     try: 
         #TODO: insert new user tuple sql query here
         query = f"SELECT * FROM grp"
-        cur.execute(query)
-        for group in cur:
+        cursor.execute(query)
+        for group in cursor:
             groups[group[0]] = group[1]
         return groups
     except mysql.connector.Error as e: 
@@ -31,14 +31,14 @@ def createGroup(userChoice):
     group_name = input("Enter groupname: ")
     try: 
         query = f"INSERT INTO grp (group_name) VALUES ('{group_name}')"
-        cur.execute(query) 
+        cursor.execute(query) 
         query = f"SELECT MAX(group_id) FROM grp"
-        cur.execute(query)
-        idTuple = cur.fetchone()
+        cursor.execute(query)
+        idTuple = cursor.fetchone()
         latestGroupId = idTuple[0]
         query = f"INSERT INTO belongsTo (user_id,group_id) VALUES ({userChoice},{latestGroupId})"
-        cur.execute(query)
-        mariadb_connection.commit()
+        cursor.execute(query)
+        connection.commit()
         print(group_name,"has been created")
     except mysql.connector.Error as e: 
         print(f"Error: {e}")
@@ -54,8 +54,8 @@ def deleteGroup():
         print("The group is not existing!")
     else:
         query = f"DELETE FROM grp WHERE group_id = {groupToDelete}"
-        cur.execute(query)
-        mariadb_connection.commit()
+        cursor.execute(query)
+        connection.commit()
         print("Succecfully deleted group",groups[groupToDelete])
 
 
@@ -111,7 +111,7 @@ def addFriendToGroup(userId, groupId, groupName):
     friendId = int(input("Enter friend ID: "))
     if friendId in friendsOfUser.keys():
         query = f"INSERT INTO belongsTo (user_id,group_id) VALUES ({friendId},{groupId})"
-        cur.execute(query)
+        cursor.execute(query)
         print(f"{friendsOfUser[friendId]} has been added to {groupName}")
     else:
         print("Friend does not exist!")
@@ -126,7 +126,7 @@ def removeFriendFromGroup(userId, groupId, groupName):
 
     if friendId in friendsOfUser.keys():
         query = f"DELETE FROM belongsTo (user_id,group_id) VALUES ({friendId},{groupId})"
-        cur.execute(query)
+        cursor.execute(query)
         print(f"{friendsOfUser[friendId]} has been removed from {groupName}")
         # should catch the case where the friend cannot be removed from the group if the group still
         #  has an unsettled expense
@@ -136,8 +136,8 @@ def removeFriendFromGroup(userId, groupId, groupName):
 def renameGroup(groupId, oldGroupName):
     newGroupName = input("Enter new group name: ")
     query = f"UPDATE grp SET group_name = '{newGroupName}' WHERE group_id = {groupId}"
-    cur.execute(query)
-    mariadb_connection.commit()
+    cursor.execute(query)
+    connection.commit()
     print(f"Group {oldGroupName} has been successfully renamed to {newGroupName}")
 
 def viewAllGroupsWithOB(userId):
@@ -148,10 +148,10 @@ def viewAllGroupsWithOB(userId):
     JOIN belongsTo as `b`
     ON g.group_id = b.group_id AND b.user_id = {userId}
     WHERE e.cash_flow > 0 AND e.isSettled = 0 GROUP BY grp.group_id;"""
-    cur.execute(query)
+    cursor.execute(query)
 
     print("Groups with outstanding balance")
-    for row in cur.fetchall():
+    for row in cursor.fetchall():
         print(row[0])
 
         

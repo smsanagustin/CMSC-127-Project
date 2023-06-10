@@ -9,7 +9,7 @@ connection = mysql.connector.connect(
     host="localhost",
     database="cmsc127group3")
 
-cursor = mariadb_connection.cursor()
+cursor = connection.cursor()
 
 #populatedUsers = ["Silent Marc","Mae Laban but e","Jon w/o h"]
 populatedUsers = {}
@@ -21,10 +21,10 @@ def login():
     while True:
         # shows a list of users
         query = "SELECT user_id, name FROM user"
-        cur.execute(query)
+        cursor.execute(query)
 
         # display all users
-        for row in cur.fetchall():
+        for row in cursor.fetchall():
             id = row[0]
             name = row[1]
             populatedUsers[id] = name
@@ -92,8 +92,9 @@ def signup():
     try: 
         #TODO: insert new user tuple sql query here
         query = f"INSERT INTO user (name, username, password) VALUES ('{inputName}', '{inputUsername}', '{inputPassword}')"
-        cur.execute(query)
-        mariadb_connection.commit()
+        cursor.execute(query)
+        connection.commit()
+
     except mysql.connector.Error as e: 
         print(f"Error: {e}")
     mainMenuLoop()
@@ -118,8 +119,8 @@ def mainMenuLoop():
             break
         elif mainMenuChoice == "0":
             # close cursor and connections
-            cur.close()
-            mariadb_connection.close()
+            cursor.close()
+            connection.close()
             break
         else:
             print("Invalid Input")
