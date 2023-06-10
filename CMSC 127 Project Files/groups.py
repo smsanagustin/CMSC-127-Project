@@ -3,7 +3,7 @@ import mysql.connector
 # connects to a mariadb database
 con = mysql.connector.connect(
     user="root",
-    password="elvinbautista",
+    password="ilove127",
     host="localhost",
     database= "cmsc127group3",
     )
@@ -95,7 +95,7 @@ def updateGroup(userChoice):
             if action == 0:
                 break
             elif action == 1:
-                addFriendToGroup(userChoice, groups[group_id])
+                addFriendToGroup(userChoice, group_id, groups[group_id])
             elif action == 2:
                 removeFriendFromGroup()
             elif action == 3:
@@ -116,9 +116,12 @@ def addFriendToGroup(userId, groupId, groupName):
     if friendId in friendsOfUser.keys():
         query = f"INSERT INTO belongsTo (user_id,group_id) VALUES ({friendId},{groupId})"
         cur.execute(query)
+
+        # con.commit()
         print(f"{friendsOfUser[friendId]} has been added to {groupName}")
     else:
         print("Friend does not exist!")
+    con.commit()
 
 
 def removeFriendFromGroup(userId, groupId, groupName):
@@ -141,7 +144,7 @@ def renameGroup(groupId, oldGroupName):
     newGroupName = input("Enter new group name: ")
     query = f"UPDATE grp SET group_name = '{newGroupName}' WHERE group_id = {groupId}"
     cur.execute(query)
-    mariadb_connection.commit()
+    con.commit()
     print(f"Group {oldGroupName} has been successfully renamed to {newGroupName}")
 
 def viewAllGroupsWithOB(userId):

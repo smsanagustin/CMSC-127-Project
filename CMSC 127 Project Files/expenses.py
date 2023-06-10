@@ -1,6 +1,5 @@
 import signupLoginMenu
 import friends
-import groups
 import mysql.connector
 
 # connects to a mariadb database
@@ -14,6 +13,32 @@ con = mysql.connector.connect(
 # perform database operations here:
 # used to execute sql queries on the databases
 cur  = con.cursor()
+
+def getGroupMembers(groupChoice):
+    members = {} # stores friends of user
+    # get all friends of user
+    query = f"select user.user_id, name from user join belongsTo where user.user_id = belongsTo.user_id and group_id = {groupChoice};"
+    cur.execute(query)
+    for row in cur.fetchall():
+        id = row[0]
+        name = row[1]
+        # add each friend to list
+        members[id] = name
+
+    return members
+
+def getAffiliatedGroups(userChoice):
+    groups = {} # stores friends of user
+    # get all friends of user
+    query = f"select grp.group_id, grp.group_name from grp join belongsTo where grp.group_id = belongsTo.group_id and user_id = {userChoice}"
+    cur.execute(query)
+    for row in cur.fetchall():
+        id = row[0]
+        name = row[1]
+        # add each friend to list
+        groups[id] = name
+
+    return groups
 
 # get all expense
 def getAllExpenses(userChoice):
@@ -93,6 +118,7 @@ def addExpense(userChoice):
                     split_percentage = float(input("Your expense percentage allocation (in decimal): "))
                     if cash_flow == 'yes':
                         split_value = (total_value*split_percentage)
+                        break
                     elif cash_flow == 'no':
                         split_value = (total_value*split_percentage*-1)
                 elif split_method == 'equal':
@@ -118,10 +144,11 @@ def addExpense(userChoice):
                 break
         # user has a shared expense with a group
         elif addExpenseOption == '2':
+            allGroups = getAffiliatedGroups(userChoice)
           
             print("List of Groups: \n")
 
-            allGroups = groups.getGroups(userChoice)
+            allGroups = getAffiliatedGroups(userChoice)
 
             for id in allGroups.keys():
                 print(f"{id} - {allGroups[id]}")
@@ -140,30 +167,65 @@ def addExpense(userChoice):
                         break
                     except ValueError:
                         print("Enter decimals only!")
-                while True: 
-                    cash_flow = input("Are you the financer? (yes or no): ")#+ if expecting to receive from others, - if you need to pay
-                    if (cash_flow not in ["yes", "no"]):
-                        print("Invalid input!")
-                    else:
-                        break
-                split_method = input("Split Method (custom or equal): ")
+                        
+                expense_name = input("Enter expense label: ")
 
+                # insert select sql query here
+                allMembers = getGroupMembers(group_id)
+
+                memberCount = len(allMembers)
+
+                for id in allMembers.keys():
+                    print(f"{id} - {allMembers[id]}")
+
+                financer = int(input("\nSelect the group financer id: "))
+
+                split_method = input("\nSplit Method (custom or equal): ")
+
+                # splitting expenses with a group in custom percentage
                 if split_method == 'custom':
-                    split_percentage_list = []
+                    split_percentage_list = {}
+                    split_percentage_list[userChoice] = float(input("\nYour expense percentage allocation (in decimal): "))
                     
-                    # split_percentage_list[] = float(input("Your expense percentage allocation (in decimal): "))
-                    if cash_flow == 'yes':
-                        split_value = (total_value*split_percentage)
-                    elif cash_flow == 'no':
-                        split_value = (total_value*split_percentage*-1)
+                    if userChoice == financer:
+                        split_value = (total_value*split_percentage_list[userChoice])
+                    else:
+                        split_value = (total_value*split_percentage_list[userChoice]*-1)
+
+                    expense_name = input("Enter expense label: ")
+                    query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{userChoice})"
+                    cur.execute(query)
+
+
+                    # insert select sql query here
+                    # allMembers = groups.getGroupMembers(group_id)
+
+                    for id in allMembers.keys():
+                        # print(f"{id} - {allMembers[id]}\n")
+                        split_percentage_list[id] = float(input(f"{allMembers[id]}'s expense percentage allocation (in decimal): "))
                     
-                    
-                    
+                        if id == financer:
+                            split_value = (total_value*split_percentage_list[id])
+                        else:
+                            split_value = (total_value*split_percentage_list[id]*-1)
+
+                        query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{id})"
+                        cur.execute(query)
+
+                # splitting expenses with a group equally    
                 elif split_method == 'equal':
-                    if cash_flow == 'yes':
-                        split_value = (total_value/2)
-                    elif cash_flow == 'no':
-                        split_value = (total_value/2*-1)
+                    
+                    print(financer)
+                    for id in allMembers.keys():
+                        print(id)
+                        if id == financer:
+                            split_value = (total_value/memberCount)
+                        else:
+                            split_value = (total_value/memberCount*-1)
+
+                        query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{id})"
+                        cur.execute(query)
+
                 else:
                     print("Invalid input!")
 
@@ -173,10 +235,10 @@ def addExpense(userChoice):
 
                 try: 
                     #TODO: insert new user tuple sql query here
-                    query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{userChoice})"
+                    # query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{userChoice})"
                     query2 = f"INSERT INTO group_has_expense (group_id,expense_id) VALUES ({group_id},{lastExpenseId})"
                     # INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id) VALUES (900, CURDATE(),0,"equal",600,"1st Group Expense",1);
-                    cur.execute(query)
+                    # cur.execute(query)
                     # con.commit()
                     cur.execute(query2)
                     con.commit()

@@ -6,7 +6,7 @@ import mysql.connector
 # connects to a mariadb database
 con = mysql.connector.connect(
     user="root",
-    password="elvinbautista",
+    password="ilove127",
     host="localhost",
     database= "cmsc127group3",
     )
