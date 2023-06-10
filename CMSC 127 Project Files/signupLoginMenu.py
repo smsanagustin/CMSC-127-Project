@@ -87,7 +87,7 @@ def login():
             mainMenuLoop()
 
 #NOTE: userChoice should be the PK of the current user?
-def mainPage(userChoice,userName):    
+def mainPage(userID,userName):    
     print("\nCurrent user is:",userName)
 
     #select an option to manage a user's expenses, friends, or groups
@@ -104,17 +104,17 @@ def mainPage(userChoice,userName):
         if managerChoice == '1':
             import expenses
             #params should be current user pk and expense table?
-            expenses.expensesManager(userChoice, populatedExpenses)
+            expenses.expensesManager(userID, populatedExpenses)
             break
         elif managerChoice == '2':
             import friends
             #params should be current user pk and users table?
-            friends.friendsManager(userChoice, userName)
+            friends.friendsManager(userID, userName)
             break
         elif managerChoice == '3':
             import groups
             #params should be current user pk and groups table?
-            groups.groupsManager(userChoice, userName)
+            groups.groupsManager(userID, userName)
             break
         elif managerChoice == '0':
             mainMenuLoop()
