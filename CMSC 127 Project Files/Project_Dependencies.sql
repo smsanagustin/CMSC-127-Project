@@ -1,4 +1,4 @@
-CREATE TABLE user(user_id INT(10) NOT NULL AUTO_INCREMENT, name VARCHAR(50) NOT NULL, username VARCHAR(18) NOT NULL, password VARCHAR(16) NOT NULL, CONSTRAINT user_id_pk PRIMARY KEY(user_id));
+CREATE TABLE IF NOT EXISTS user(user_id INT(10) NOT NULL AUTO_INCREMENT, name VARCHAR(50) NOT NULL, username VARCHAR(18) NOT NULL, password VARCHAR(16) NOT NULL, CONSTRAINT user_id_pk PRIMARY KEY(user_id));
 CREATE TABLE IF NOT EXISTS expense(expense_id INT(10) NOT NULL AUTO_INCREMENT,total_value DECIMAL(5,2) NOT NULL,date_incurred DATE, isSettled BOOLEAN,
     split_method VARCHAR(6) NOT NULL CHECK (split_method IN ('custom', 'equal')),
     cash_flow INT(10),

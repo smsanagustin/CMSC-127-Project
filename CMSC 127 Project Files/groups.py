@@ -1,5 +1,6 @@
 import mysql.connector
 
+# make new connection
 connection = mysql.connector.connect(
     user="root",
     password="ilove127",
@@ -169,6 +170,9 @@ def groupsManager(userChoice, userName):
         groupManagerOption = input("\nEnter choice: ")
         
         if groupManagerOption == '0':
+            # close connection
+            cursor.close()
+            connection.close()
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice,userName)

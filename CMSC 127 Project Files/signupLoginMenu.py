@@ -18,34 +18,73 @@ populatedExpenses = []
 
 
 def login():
-    while True:
-        # shows a list of users
-        query = "SELECT user_id, name FROM user"
+        # get the number of users
+        query = "SELECT count(user_id) FROM user"
         cursor.execute(query)
+        count = cursor.fetchone()
 
-        # display all users
-        for row in cursor.fetchall():
-            id = row[0]
-            name = row[1]
-            populatedUsers[id] = name
-            # print each instance to the console
-            print(f"{id} - {name}")
+        # if there are users, let the current user log in
+        if count[0] > 0:
 
-        # users can select a user to log in from list of users
-        # in the tuple [0] is ID and [1] is name
-        userChoice = int(input("\nSelect User: "))
-        print(userChoice)
+            # users can select a user to log in from list of users
+            userNameInput = input("Enter your username (Enter 0 to exit): ")
 
-        if userChoice not in populatedUsers.keys():
-            print("Invalid Input")
-        elif userChoice == '0':
-            mainMenuLoop()
-            break
+            # if user enters 0, exit prompt
+            if userNameInput == "0":
+                mainMenuLoop()
+            # if username exists, ask for user's password
+            else:
+                userCredentials = {}
+                query = f"SELECT username, password FROM user WHERE username = %s"
+                cursor.execute(query, (userNameInput,))
+
+                # if users exists in db, save their credentials
+                result = cursor.fetchone()
+                if result is not None:
+                    username = result[0]
+                    password = result[1]
+                    userCredentials[username] = password
+
+                    # ask for password
+                    userPasswordInput = input("Enter your password: ")
+
+                    # check if the password matches
+                    if userPasswordInput == userCredentials[username]:
+                        # get user's name and id
+                        query = f"SELECT user_id, name FROM user WHERE username = %s"
+                        cursor.execute(query, (userNameInput,))
+                        result = cursor.fetchone()
+
+                        user_id = result[0]
+                        name = result[1]
+
+                        print(f"Successfully logged in: {name}")
+                        # call mainpage and pass current user's id and their name 
+                        mainPage(user_id, name)
+                    else:
+                        print("Wrong password!")
+                        mainMenuLoop()
+
+                else:
+                    print("username not found!")
+                    mainMenuLoop()
+
+            # if userChoice == '0':
+            #     mainMenuLoop()
+            # else:
+            #     # ask for the password of the chosen user
+            #     # userPasswordInput = input("Enter your password: ")
+
+            #     # check if the password matches the chosen id
+            #     # query = "SELECT password FROM "
+
+            #     print(f"\nSuccessfully Logged In: {populatedUsers[userChoice]}")
+
+            #     # call mainpage and pass current user's id (userChoice) and their name 
+            #     mainPage(userChoice, usersDict[userChoice])
         else:
-            print(f"\nSuccessfully Logged In: {populatedUsers[userChoice]}")
-            mainPage(userChoice, populatedUsers[userChoice])
-            break
-
+            print("There are no users yet. Create one to login.")
+            mainMenuLoop()
 
 #NOTE: userChoice should be the PK of the current user?
 def mainPage(userChoice,userName):    

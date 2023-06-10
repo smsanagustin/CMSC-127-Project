@@ -2,6 +2,7 @@
 # userChoice - id of the logged in user
 import mysql.connector
 
+# make new connection
 connection = mysql.connector.connect(
     user="root",
     password="ilove127",
@@ -165,6 +166,17 @@ def searchFriend(userChoice):
 
 # shows all friends with outstanding balance
 def showFriendsWithOutBalance(userChoice):
+    # reconnect to mariadb (to reload db)
+    connection = mysql.connector.connect(
+        user="root",
+        password="ilove127",
+        host="localhost",
+        database="cmsc127group3"
+    )
+
+    # create cursor object
+    cursor = connection.cursor()
+
     # get all friends
     usersFriends = getFriends(userChoice)
 
@@ -223,6 +235,9 @@ def friendsManager(userChoice, userName):
         friendManagerOption = input("\nEnter choice: ")
         
         if friendManagerOption == '0':
+            # close connection for this file
+            cursor.close()
+            connection.close()
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice, userName)

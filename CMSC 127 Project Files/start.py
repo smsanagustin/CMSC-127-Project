@@ -1,7 +1,6 @@
 import sys
 import mysql.connector
 from mysql.connector import Error
-import signupLoginMenu
 
 def execute_sql_from_file(filename):
     try:
@@ -46,7 +45,11 @@ def execute_sql_from_file(filename):
 
         connection.commit()
 
-        print("SQL statements executed successfully!")
+        print("Successfully loaded project dependencies!")
+
+        # close cursor and connection
+        cursor.close()
+        connection.close()
 
     except Error as e:
         print(f"Error executing SQL statements: {e}")
@@ -55,4 +58,5 @@ def execute_sql_from_file(filename):
 execute_sql_from_file("Project_Dependencies.sql")
 
 #separate function call module to stop iterating mainMenuLoop if imported from other modules
+import signupLoginMenu              # moved here before the function call so that project dependencies are loaded first
 signupLoginMenu.mainMenuLoop()

@@ -2,7 +2,7 @@ import signupLoginMenu
 import friends
 import mysql.connector
 
-# connects to a mariadb database
+# make new connection
 connection = mysql.connector.connect(
     user="root",
     password="ilove127",
@@ -361,7 +361,8 @@ def expensesManager(userChoice, userName):
 
         if expenseManagerOption == '0':
             # close the connection
-
+            cursor.close()
+            connection.close()
 
             signupLoginMenu.mainPage(userChoice, userName)
             break
