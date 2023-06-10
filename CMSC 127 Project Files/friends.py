@@ -224,7 +224,7 @@ def friendsManager(userChoice, userName):
         if friendManagerOption == '0':
 
             import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
+            signupLoginMenu.mainPage(userChoice, userName)
             break
         elif friendManagerOption == '1':
             addFriend(userChoice)
