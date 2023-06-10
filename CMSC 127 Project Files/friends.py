@@ -165,6 +165,8 @@ def searchFriend(userChoice):
 
 # shows all friends with outstanding balance
 def showFriendsWithOutBalance(userChoice):
+    # get all friends
+    usersFriends = getFriends(userChoice)
 
     friendsWithBalance = []
 
@@ -188,15 +190,14 @@ def showFriendsWithOutBalance(userChoice):
     for row in results:
         friendsWithBalance.append(row[0])
 
-    # print each friend in the list
+    # print a friend with outstanding balance
     if len(friendsWithBalance) > 0:
         print("Friends with outstanding balance: ")
         for friend in friendsWithBalance:
-            print(f"{friend}\n")
+            if friend in usersFriends.values():
+                print(f"{friend}\n")
     else:
         print("No friends with outstanding balance!")
-
-    
 
 def viewAllFriends(userChoice):
     userFriends = getFriends(userChoice)

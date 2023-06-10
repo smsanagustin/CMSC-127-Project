@@ -246,7 +246,6 @@ def addExpense(userChoice):
                     print(f"Error: {e}")
                 break
         elif addExpenseOption == '0':
-            expensesManager(userChoice)
             break
         else: 
             print("Invalid Input")
@@ -361,6 +360,8 @@ def expensesManager(userChoice, userName):
         expenseManagerOption = input("\nEnter choice: ")
 
         if expenseManagerOption == '0':
+            # close the connection
+            
 
             signupLoginMenu.mainPage(userChoice, userName)
             break

@@ -3,13 +3,13 @@ import friends
 import groups
 import mysql.connector
 
-mariadb_connection = mysql.connector.connect(
+connection = mysql.connector.connect(
     user="root",
     password="ilove127",
     host="localhost",
     database="cmsc127group3")
 
-cur = mariadb_connection.cursor()
+cursor = mariadb_connection.cursor()
 
 #populatedUsers = ["Silent Marc","Mae Laban but e","Jon w/o h"]
 populatedUsers = {}
@@ -117,6 +117,9 @@ def mainMenuLoop():
             signup()
             break
         elif mainMenuChoice == "0":
+            # close cursor and connections
+            cur.close()
+            mariadb_connection.close()
             break
         else:
             print("Invalid Input")
