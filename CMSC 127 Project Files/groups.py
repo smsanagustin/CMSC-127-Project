@@ -80,14 +80,27 @@ def deleteGroup():
 
 def searchGroup():
     groups = getGroups()
+    
+    # if there are groups, ask for user input:
+    if len(groups) > 0:
+        print("\t-----SEARCHING-----\n")
+        groupToDisplay = input("Type the name of the group: ")
 
-    print("\t-----SEARCHING-----\n")
-    groupToDisplay = int(input("Enter group id: "))
+        query = f"select * from grp where group_name like '%{groupToDisplay}%'"
+        cursor.execute(query)
 
-    if groupToDisplay not in groups.keys():
-        print("The group is not existing!")
+        # if there are results, print them
+        result = cursor.fetchall()
+        if len(result) > 0:
+            print("Found these groups: ")
+            for row in result:
+                group_id = row[0]
+                group_name = row[1]
+                print(f"{group_id} - {group_name}")
+        else:
+            print("No group with that name was found.")
     else:
-        print(groupToDisplay,"-",groups[groupToDisplay])
+        print("There are no groups yet!")
 
 def updateGroup(userChoice):
     groups = getGroups()
