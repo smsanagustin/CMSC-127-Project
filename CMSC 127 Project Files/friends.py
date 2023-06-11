@@ -67,7 +67,7 @@ def addFriend(userChoice):
                 cursor.execute(query)
                 
                 query = f"INSERT INTO friendsWith (user1, user2) VALUES ({idOfFriendToAdd}, {userChoice})"
-                cursor(query)
+                cursor.execute(query)
             
                 connection.commit()
 

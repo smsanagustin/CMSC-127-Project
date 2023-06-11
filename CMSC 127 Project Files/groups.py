@@ -29,20 +29,23 @@ def viewAllGroups():
 
 def createGroup(userChoice):
     print("\t-----ADDING-----\n")
-    group_name = input("Enter groupname: ")
-    try: 
-        query = f"INSERT INTO grp (group_name) VALUES ('{group_name}')"
-        cursor.execute(query) 
-        query = f"SELECT MAX(group_id) FROM grp"
-        cursor.execute(query)
-        idTuple = cursor.fetchone()
-        latestGroupId = idTuple[0]
-        query = f"INSERT INTO belongsTo (user_id,group_id) VALUES ({userChoice},{latestGroupId})"
-        cursor.execute(query)
-        connection.commit()
-        print(group_name,"has been created")
-    except mysql.connector.Error as e: 
-        print(f"Error: {e}")
+    group_name = input("Enter groupname (Enter 0 to exit): ")
+    if group_name == "0":
+        print("Exiting...")
+    else:
+        try: 
+            query = f"INSERT INTO grp (group_name) VALUES ('{group_name}')"
+            cursor.execute(query) 
+            query = f"SELECT MAX(group_id) FROM grp"
+            cursor.execute(query)
+            idTuple = cursor.fetchone()
+            latestGroupId = idTuple[0]
+            query = f"INSERT INTO belongsTo (user_id,group_id) VALUES ({userChoice},{latestGroupId})"
+            cursor.execute(query)
+            connection.commit()
+            print(group_name,"has been created")
+        except mysql.connector.Error as e: 
+            print(f"Error: {e}")
 
 def deleteGroup():
     groups = getGroups()
@@ -50,9 +53,16 @@ def deleteGroup():
         print(key,"-",value)
 
     print("\t-----DELETING-----\n")
-    groupToDelete = int(input("Enter group id: "))
-    if groupToDelete not in groups.keys():
-        print("The group is not existing!")
+    while True:
+        try:
+            groupToDelete = int(input("Enter id of group to delete (Enter 0 to exit): "))
+            break
+        except ValueError:
+            print("Please enter an integer only!")
+    if groupToDelete == 0:
+        print("Exiting...")
+    elif groupToDelete not in groups.keys():
+        print("The group does not exist!")
     else:
         query = f"DELETE FROM grp WHERE group_id = {groupToDelete}"
         cursor.execute(query)

@@ -88,7 +88,6 @@ def login():
 
 #NOTE: userChoice should be the PK of the current user?
 def mainPage(userID,userName):    
-    print("\nCurrent user is:",userName)
 
     #select an option to manage a user's expenses, friends, or groups
     while True:

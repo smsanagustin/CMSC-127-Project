@@ -86,80 +86,84 @@ def addExpense(userChoice, userName):
         # User has a shared expense with a friend
         if addExpenseOption == '1':
 
-            print("\nList of Friends: ")
-
+            # get a list of friends
             allFriends = friends.getFriends(userChoice)
 
-            # Display user friends
-            for id in allFriends.keys():
-                print(f"{id} - {allFriends[id]}")
+            # if user has friends, display them
+            if len(allFriends) > 0:
+                print("\nList of Friends: ")
 
-            # users can select a user to log in from list of users
-            # in the tuple [0] is ID and [1] is name
-            friend_id = int(input("\nSelect a friend id: "))
-          
-            # input error catch
-            if friend_id not in allFriends.keys():
-                print("Please select a correct friend id.")
-                continue
-            # requesting add expense parameters
-            else:
+                # Display user friends
+                for id in allFriends.keys():
+                    print(f"{id} - {allFriends[id]}")
 
-                # request expense name
-                expense_name = input("Enter expense label: ")
+                # users can select a user to log in from list of users
+                # in the tuple [0] is ID and [1] is name
+                friend_id = int(input("\nSelect a friend id: "))
+            
+                # input error catch
+                if friend_id not in allFriends.keys():
+                    print("Please select a correct friend id.")
+                    continue
+                # requesting add expense parameters
+                else:
+                    # request expense name
+                    expense_name = input("Enter expense label: ")
 
-                # loop for requesting valid expense input
-                while True:
+                    # loop for requesting valid expense input
+                    while True:
+                        try: 
+                            total_value = float(input("Enter total expenses: "))
+                            break
+                        except ValueError:
+                            print("Enter decimals only!")
+
+                    # loop for requesting valid financer response
+                    while True: 
+                        cash_flow = input("Are you the financer? (yes or no): ")#+ if expecting to receive from others, - if you need to pay
+                        if (cash_flow not in ["yes", "no"]):
+                            print("Invalid input!")
+                        else:
+                            break
+                    
+                    # loop for requesting valid split method response
+                    while True:
+                        split_method = input("Split Method (custom or equal): ")
+                        if split_method == 'custom':
+                            # loop for requesting valid percentage input for custom split
+                            while True:
+                                split_percentage = float(input("What percentage will you pay? (w/o % sign): "))
+                                if split_percentage not in range (0,100):
+                                    print("Please input percentage values from 0-100.")
+                                else:
+                                    if cash_flow == 'yes':
+                                        split_value = round((total_value*(split_percentage/100)),2)
+                                        break
+                                    elif cash_flow == 'no':
+                                        split_value = round((total_value*(split_percentage/100)*-1),2)
+                                        break
+                            break
+                        elif split_method == 'equal':
+                            if cash_flow == 'yes':
+                                split_value = round((total_value/2),2)
+                                break
+                            elif cash_flow == 'no':
+                                split_value = round((total_value/2*-1),2)
+                                break
+                        else:
+                            print("Invalid input!")
+
+
                     try: 
-                        total_value = float(input("Enter total expenses: "))
-                        break
-                    except ValueError:
-                        print("Enter decimals only!")
-
-                # loop for requesting valid financer response
-                while True: 
-                    cash_flow = input("Are you the financer? (yes or no): ")#+ if expecting to receive from others, - if you need to pay
-                    if (cash_flow not in ["yes", "no"]):
-                        print("Invalid input!")
-                    else:
-                        break
-                
-                # loop for requesting valid split method response
-                while True:
-                    split_method = input("Split Method (custom or equal): ")
-                    if split_method == 'custom':
-                        # loop for requesting valid percentage input for custom split
-                        while True:
-                            split_percentage = float(input("What percentage will you pay? (w/o % sign): "))
-                            if split_percentage not in range (0,100):
-                                print("Please input percentage values from 0-100.")
-                            else:
-                                if cash_flow == 'yes':
-                                    split_value = round((total_value*(split_percentage/100)),2)
-                                    break
-                                elif cash_flow == 'no':
-                                    split_value = round((total_value*(split_percentage/100)*-1),2)
-                                    break
-                        break
-                    elif split_method == 'equal':
-                        if cash_flow == 'yes':
-                            split_value = round((total_value/2),2)
-                            break
-                        elif cash_flow == 'no':
-                            split_value = round((total_value/2*-1),2)
-                            break
-                    else:
-                        print("Invalid input!")
-
-
-                try: 
-                    # executes arguments pushing to mariadb
-                    query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{userChoice},{friend_id});"
-                    cursor.execute(query)
-                    connection.commit()
-                except mysql.connector.Error as e: 
-                    print(f"Error: {e}")
-                break
+                        # executes arguments pushing to mariadb
+                        query = f"INSERT INTO expense (total_value,date_incurred,isSettled,split_method,cash_flow,expense_name,user_id,friend_id) VALUES ({total_value}, CURDATE(),0,'{split_method}',{split_value},'{expense_name}',{userChoice},{friend_id});"
+                        cursor.execute(query)
+                        connection.commit()
+                    except mysql.connector.Error as e: 
+                        print(f"Error: {e}")
+                    break
+            else:
+                print("You have no friends yet!")
 
         # user has a shared expense with a group
         elif addExpenseOption == '2':
@@ -404,7 +408,7 @@ def expensesManager(userChoice, userName):
             signupLoginMenu.mainPage(userChoice, userName)
             break
         elif expenseManagerOption == '1':
-            addExpense(userChoice)
+            addExpense(userChoice, userName)
     
             signupLoginMenu.mainPage(userChoice, userName)
             break
