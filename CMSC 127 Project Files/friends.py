@@ -180,15 +180,15 @@ def showFriendsWithOutBalance(userChoice):
     for row in results:
         friendsWithBalance.append(row[0])   
 
-    # get all friends with balance (where their id is user_id instead of friend_id)
-    query = f"SELECT name FROM user JOIN expense ON user.user_id=expense.user_id WHERE expense.friend_id = {userChoice} AND cash_flow < 0"
-    cur.execute(query)
+    # # get all friends with balance (where their id is user_id instead of friend_id)
+    # query = f"SELECT name FROM user JOIN expense ON user.user_id=expense.user_id WHERE expense.friend_id = {userChoice} AND cash_flow < 0"
+    # cur.execute(query)
 
-    results = cur.fetchall()
+    # results = cur.fetchall()
 
-    # populate the friends with balance list using results from query
-    for row in results:
-        friendsWithBalance.append(row[0])
+    # # populate the friends with balance list using results from query
+    # for row in results:
+    #     friendsWithBalance.append(row[0])
 
     # print each friend in the list
     if len(friendsWithBalance) > 0:
@@ -226,7 +226,7 @@ def friendsManager(userChoice, userName):
         if friendManagerOption == '0':
 
             import signupLoginMenu
-            signupLoginMenu.mainPage(userChoice)
+            signupLoginMenu.mainPage(userChoice, userName)
             break
         elif friendManagerOption == '1':
             addFriend(userChoice)

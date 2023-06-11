@@ -16,12 +16,14 @@ con = mysql.connector.connect(
 cur  = con.cursor()
 
 #populatedUsers = ["Silent Marc","Mae Laban but e","Jon w/o h"]
-populatedUsers = {}
-populatedExpenses = []
+# populatedUsers = {}
+# populatedExpenses = []
 # populatedGroups = []
 
 
 def login():
+    cur  = con.cursor()
+    populatedUsers = {}
     while True:
         # shows a list of users
         query = "SELECT user_id, name FROM user"
@@ -35,6 +37,7 @@ def login():
             # print each instance to the console
             print(f"{id} - {name}")
         print("0 - Back")
+        cur.close()
 
         # users can select a user to log in from list of users
         # in the tuple [0] is ID and [1] is name

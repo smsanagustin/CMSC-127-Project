@@ -50,3 +50,14 @@ CREATE TABLE IF NOT EXISTS belongsTo(
     CONSTRAINT fk_belongsto_group_id FOREIGN KEY (group_id) REFERENCES grp (group_id),
     CONSTRAINT belongsTo_user_id UNIQUE(`user_id`, `group_id`)
 );
+
+-- -- --filler
+-- INSERT INTO user (name,username,password) VALUES("Jon Remonte", "jaremonte","passwordkoto");
+-- INSERT INTO user (name,username,password) VALUES("Elvin Bautista", "ebautista","passwordkoto");
+-- INSERT INTO user (name,username,password) VALUES("Mae SA", "jaremonte","passwordkoto");
+
+-- -- -- filler
+-- INSERT INTO friendsWith (user1,user2) VALUES (1,2);
+-- INSERT INTO friendsWith (user1,user2) VALUES (2,1);
+-- INSERT INTO friendsWith (user1,user2) VALUES (3,2);
+-- INSERT INTO friendsWith (user1,user2) VALUES (2,3);
