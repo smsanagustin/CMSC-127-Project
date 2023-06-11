@@ -139,15 +139,15 @@ def addExpense(userChoice, userName):
                     if split_method == 'custom':
                         # loop for requesting valid percentage input for custom split
                         while True:
-                            split_percentage = float(input("How much will you pay (enter exact value): "))
-                            if split_percentage > total_value:
+                            cashToPay = float(input("How much will you pay (enter exact value): "))
+                            if cashToPay > total_value:
                                 print("Your input is not within the acceptable range.")
                             else:
                                 if cash_flow == 'yes':
-                                    split_value = round(total_value-(total_value*(split_percentage/100)),2)
+                                    split_value = round(total_value-cashToPay,2)
                                     break
                                 elif cash_flow == 'no':
-                                    split_value = round((total_value*(split_percentage/100)*-1),2)
+                                    split_value = round((cashToPay*-1),2) 
                                     break
                         break
                     elif split_method == 'equal':
@@ -355,7 +355,7 @@ def searchExpense(userChoice):
         for row in searchResults:
             print(row[0])
     else:
-        print("No group found.")
+        print("No expense found.")
 
 def updateExpense(userChoice):
     # print all expenses 
@@ -405,18 +405,23 @@ def updateExpense(userChoice):
 def viewExpensesInMonth(userChoice):
     # get all expenses of currently logged in user
     # query = f"SELECT * FROM expense WHERE user_id = {userChoice} or friend_id = {userChoice} AND isSettled = 0 AND date_incurred IN (CURDATE(),DATE_SUB(CURDATE(), INTERVAL 1 MONTH));"
-    query = f"select * from expense e left join group_has_expense h on e.expense_id = h.expense_id where h.user_id is null or h.user_id = {userChoice} AND date_incurred IN (CURDATE(),DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) order by e.date_incurred, e.expense_id;"
+    query = f"""select * from expense id 
+    where user_id = {userChoice} or friend_id = {userChoice} or 
+    expense_id in (select expense_id from group_has_expense where user_id = {userChoice});"""
     cursor.execute(query)
 
     viewExpensesInAMonth = cursor.fetchall()
 
-    for expense in viewExpensesInAMonth:
-        print(f"{expense[2]}\n Expense ID: {expense[0]} | Expense Name: {expense[6]} | Expense Total: {expense[1]} | Expense Share: {expense[5]} |\n")
+    if len(viewExpensesInAMonth) > 0:
+        for expense in viewExpensesInAMonth:
+            print(f"{expense[2]}\n Expense ID: {expense[0]} | Expense Name: {expense[6]} \n")
+    else:
+        print("You haven't made expenses within this month.")
 
 def viewExpensesWFriend(userChoice):
     # get all expenses of currently logged in user with friends
     # query = f"select * from expense join user on expense.friend_id = user.user_id where expense.user_id = {userChoice} or expense.friend_id = {userChoice} and friend_id is not null;"
-    query = f"select * from expense join user u join user v on expense.user_id = u.user_id and expense.friend_id = v.user_id where expense.user_id = {userChoice} or expense.friend_id = {userChoice} and friend_id is not null and expense.isSettled = 0;"
+    query = f"select * from expense join user u join user v on expense.user_id = u.user_id and expense.friend_id = v.user_id where expense.user_id = {userChoice} or expense.friend_id = {userChoice} and friend_id is not null;"
 
     # select * from expense join user u join user v on expense.user_id = u.user_id and expense.friend_id = v.user_id where expense.user_id = 1 or expense.friend_id = 1 and friend_id is not null;
     cursor.execute(query)
@@ -426,16 +431,16 @@ def viewExpensesWFriend(userChoice):
     for expense in expensesWFriends:
         if expense[7] == userChoice:
             # print("cond1")
-            print(f"Friend Name: {expense[14]} | Expense ID: {expense[0]} | Expense Name: {expense[6]} | Expense Total: {expense[1]} | Cash Flow: {expense[5]} | Settled?: {'Expense Settled' if expense[4] == 1 else 'Not Yet Settled'}")
+            print(f"Friend Name: {expense[14]} | Expense ID: {expense[0]} | Expense Name: {expense[6]} | Expense Total: {expense[1]} | Cash Flow: {expense[5]} | Settled?: {'Expense Settled' if expense[3] == 1 else 'Not Yet Settled'}")
             # totalBalance = totalBalance + expense[5]
         elif expense[8] == userChoice:
             if expense[5] < 0:
                 # print("cond2.1")
-                print(f"Friend Name: {expense[10]} | Expense ID: {expense[0]} | Expense Name: {expense[6]} | Expense Total: {expense[1]} | Cash Flow: {expense[1]+expense[5]} | Settled?: {'Expense Settled' if expense[4] == 1 else 'Not Yet Settled'}")
+                print(f"Friend Name: {expense[10]} | Expense ID: {expense[0]} | Expense Name: {expense[6]} | Expense Total: {expense[1]} | Cash Flow: {expense[1]+expense[5]} | Settled?: {'Expense Settled' if expense[3] == 1 else 'Not Yet Settled'}")
                 # totalBalance = totalBalance + (expense[1]+expense[5])
             else:
                 # print("cond2.2")
-                print(f"Friend Name: {expense[10]} | Expense ID: {expense[0]} | Expense Name: {expense[6]} | Expense Total: {expense[1]} | Cash Flow: {(expense[1]-expense[5])*-1} | Settled?: {'Expense Settled' if expense[4] == 1 else 'Not Yet Settled'}")
+                print(f"Friend Name: {expense[10]} | Expense ID: {expense[0]} | Expense Name: {expense[6]} | Expense Total: {expense[1]} | Cash Flow: {(expense[1]-expense[5])*-1} | Settled?: {'Expense Settled' if expense[3] == 1 else 'Not Yet Settled'}")
                 # totalBalance = totalBalance + ((expense[1]-expense[5])*-1)
 
 def viewExpensesWGroup(userChoice):
@@ -452,32 +457,27 @@ def viewExpensesWGroup(userChoice):
 
 def viewTotalBalance(userChoice):
     totalBalance = 0
-    query = f"select * from expense join user u join user v on expense.user_id = u.user_id and expense.friend_id = v.user_id where expense.user_id = {userChoice} or expense.friend_id = {userChoice} and friend_id is not null and isSettled = 0;"
+
+    # total balance from friends
+    query = f"""select COALESCE(sum(cash_flow),0) from expense 
+    where user_id = {userChoice} and cash_flow < 0 and isSettled = 0 
+    or expense_id = (select expense_id from expense where friend_id = {userChoice} 
+    and cash_flow > 1 and isSettled = 0);"""
     cursor.execute(query)
+    result = cursor.fetchone()
+    totalBalance += result[0] # add to total balance the sum of balance from friends
 
-    overallExpenses = cursor.fetchall()
-
-    for expense in overallExpenses:
-        if expense[7] == userChoice:
-            totalBalance = totalBalance + expense[5]
-        elif expense[8] == userChoice:
-            if expense[5] < 0:
-                totalBalance = totalBalance + (expense[1]+expense[5])
-            else:
-                totalBalance = totalBalance + ((expense[1]-expense[5])*-1)
-
-    # get all expenses of currently logged in user with groups
-    query = f"select group_name, h.expense_id, expense_name, isSettled, h.user_id, total_value, h.cash_flow from expense e join group_has_expense h join grp on e.expense_id = h.expense_id and h.group_id = grp.group_id where h.user_id = {userChoice} and isSettled = 0;"
+    # total balance from group
+    query = f"select COALESCE(sum(g.cash_flow),0) from group_has_expense g JOIN expense e ON g.expense_id = e.expense_id where g.user_id = {userChoice} and g.cash_flow < 0 and e.isSettled = 0;"
     cursor.execute(query)
+    result = cursor.fetchone()
+    totalBalance += result[0] # add to total balance the sum of balance from friend
+    totalBalance *= -1
 
-    overallExpenses = cursor.fetchall()
-
-    for expense in overallExpenses:
-        # print(f"Group Name: {expense[0]} | Expense ID: {expense[1]} | Expense Name: {expense[2]} | Expense Total: {expense[3]} | Cash Flow: {expense[4]} |")
-        totalBalance = totalBalance + expense[4]
-    
-    # if total
-    print(f"Overall Expense Balance: {totalBalance}")
+    if totalBalance > 0:
+        print(f"Your balance is: {totalBalance}")
+    else:
+        print("You have no balance yet.")
 
 def expensesManager(userChoice, userName):
     while True:
