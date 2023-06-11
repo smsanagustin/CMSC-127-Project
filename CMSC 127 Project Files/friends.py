@@ -82,7 +82,7 @@ def addFriend(userChoice):
             print("Exiting...")
             break
         else:
-            print("Friend does not exist!")
+            print("User does not exist!")
 
     connection.commit()
 
@@ -145,7 +145,7 @@ def searchFriend(userChoice):
             for row in searchResults:
                 id = row[0]
                 name = row[1]
-                print(f"{id} - {name}")
+                print(f"ID: {id} - Name: {name}")
             break
         elif nameOfFriendToSearch == "0":
             print("Exiting...")

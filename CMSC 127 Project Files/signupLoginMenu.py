@@ -2,6 +2,7 @@ import expenses
 import friends
 import groups
 import mysql.connector
+import pwinput
 
 connection = mysql.connector.connect(
     user="root",
@@ -46,7 +47,7 @@ def login():
                     userCredentials[username] = password
 
                     # ask for password
-                    userPasswordInput = input("Enter your password: ")
+                    userPasswordInput = pwinput.pwinput(prompt='Password: ', mask="*")
 
                     # check if the password matches
                     if userPasswordInput == userCredentials[username]:
@@ -116,6 +117,7 @@ def mainPage(userID,userName):
             groups.groupsManager(userID, userName)
             break
         elif managerChoice == '0':
+            print("Successfully logged out!")
             mainMenuLoop()
             break
         else:
@@ -125,13 +127,22 @@ def mainPage(userID,userName):
 def signup():
     inputName = input("Name: ")
     inputUsername = input("Enter Username: ")
-    inputPassword = input("Enter password: ")
+    while True:
+        inputPassword = pwinput.pwinput(prompt='Password: ', mask="*")
+        inputPasswordAgain = pwinput.pwinput(prompt='Confirm password: ', mask="*")
+
+        if inputPassword == inputPasswordAgain:
+            break
+        else:
+            print("Passwords do not match!")
 
     try: 
         #TODO: insert new user tuple sql query here
         query = f"INSERT INTO user (name, username, password) VALUES ('{inputName}', '{inputUsername}', '{inputPassword}')"
         cursor.execute(query)
         connection.commit()
+
+        print("Successfully created account!")
 
     except mysql.connector.Error as e: 
         print(f"Error: {e}")
