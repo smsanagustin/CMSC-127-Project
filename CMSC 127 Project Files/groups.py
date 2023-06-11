@@ -64,6 +64,14 @@ def deleteGroup():
     elif groupToDelete not in groups.keys():
         print("The group does not exist!")
     else:
+        # delete tuple from expense where group id is the foreign key
+        query = f"DELETE FROM group_has_expense WHERE group_id = {groupToDelete}"
+        cursor.execute(query)
+
+        # delete tuple from belongsto where group id is the foreign key
+        query = f"DELETE FROM belongsTo WHERE group_id = {groupToDelete}"
+        cursor.execute(query)
+
         query = f"DELETE FROM grp WHERE group_id = {groupToDelete}"
         cursor.execute(query)
         connection.commit()
@@ -180,9 +188,6 @@ def groupsManager(userChoice, userName):
         groupManagerOption = input("\nEnter choice: ")
         
         if groupManagerOption == '0':
-            # close connection
-            cursor.close()
-            connection.close()
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice,userName)

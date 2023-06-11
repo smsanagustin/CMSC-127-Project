@@ -401,9 +401,6 @@ def expensesManager(userChoice, userName):
         expenseManagerOption = input("\nEnter choice: ")
 
         if expenseManagerOption == '0':
-            # close the connection
-            cursor.close()
-            connection.close()
 
             signupLoginMenu.mainPage(userChoice, userName)
             break

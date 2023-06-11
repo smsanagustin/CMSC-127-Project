@@ -235,9 +235,6 @@ def friendsManager(userChoice, userName):
         friendManagerOption = input("\nEnter choice: ")
         
         if friendManagerOption == '0':
-            # close connection for this file
-            cursor.close()
-            connection.close()
 
             import signupLoginMenu
             signupLoginMenu.mainPage(userChoice, userName)
