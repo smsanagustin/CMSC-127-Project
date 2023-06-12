@@ -8,9 +8,11 @@
 
 ### Basic Requirements and Dependencies
   - Python3
+    - To install Python3 on Ubuntu, type this on terminal: `sudo apt install -y python3-pip`, on Windows, you can install Python through here: https://www.python.org/downloads/
     - mysql-connector (`pip install mysql-connector` or `pip3 install mysql-connector`)
     - pwinput (`pip install pwinput` or `pip3 install pwinput`)
   - mariadb
+    - install MariaDB from here: https://mariadb.com/downloads/
 ### How to start the code
  Before starting the code, make sure that all the required dependencies are already installed.   
  To start the code, type in the terminal `python start.py` or `python3 start.py`  
