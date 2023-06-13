@@ -225,16 +225,15 @@ def renameGroup(groupId, oldGroupName):
     print(f"Group {oldGroupName} has been successfully renamed to {newGroupName}")
 
 def viewAllGroupsWithOB(userId):
-    query = f"""SELECT group_name, SUM(new.cash_flow) as 'Balance' FROM (SELECT grp.group_name, h.cash_flow FROM group_has_expense h JOIN expense e ON h.expense_id = e.expense_id JOIN grp on h.group_id = grp.group_id WHERE h.user_id = 1) as new;"""
+    query = f"""SELECT group_name, SUM(new.cash_flow) as 'Balance' FROM (SELECT grp.group_name, h.cash_flow FROM group_has_expense h JOIN expense e ON h.expense_id = e.expense_id JOIN grp on h.group_id = grp.group_id WHERE h.user_id = {userId}) as new;"""
     cursor.execute(query)
     
 
     print("Groups with outstanding balance")
     for row in cursor.fetchall():
         group_name = row[0]
-        balance = row[1]
+        balance = row[1] 
         print(f"{group_name} - {balance}")
-
         
 def groupsManager(userChoice, userName):
     while True:
