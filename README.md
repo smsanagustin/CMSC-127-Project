@@ -25,3 +25,8 @@
    - Group Manager
 <br />
 All the functionalities and reports to be generated are under their respective group of functions.
+
+### Sample run
+https://github.com/smsanagustin/CMSC-127-Project/assets/90997152/588df675-fec5-4ec7-a8e7-a014b2dc9c52
+
+
